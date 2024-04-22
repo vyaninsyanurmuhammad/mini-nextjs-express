@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import { fontFamily } from 'tailwindcss/defaultTheme';
 
 const config = {
   darkMode: ['class'],
@@ -52,6 +53,31 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        'slate-blue': {
+          100: '#CDBFF2',
+          200: '#C4B4F0',
+          300: '#BCAAEE',
+          400: '#B49FEC',
+          500: '#AB95EA',
+          600: '#A38AE8',
+          700: '#9B7FE6',
+          800: '#9275E4',
+          900: '#8A6BE2',
+        },
+        'blue-crayola': {
+          100: '#B7C7FA',
+          200: '#ACBEF9',
+          300: '#A0B4F8',
+          400: '#94ABF8',
+          500: '#88A2F7',
+          600: '#7C98F6',
+          700: '#708FF5',
+          800: '#6486F4',
+          900: '#587BF3',
+        },
+      },
+      fontFamily: {
+        sans: ['var(--font-sans)', ...fontFamily.sans],
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -74,7 +100,7 @@ const config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
 } satisfies Config;
 
 export default config;
