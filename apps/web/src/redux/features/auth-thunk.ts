@@ -1,4 +1,4 @@
-import { getSession, login, logout } from '@/lib/jwt';
+import { getSession, getToken, login, logout } from '@/lib/jwt';
 import {
   FetchUser,
   User,
@@ -60,11 +60,47 @@ export const signInThunk = createAsyncThunk(
   },
 );
 
+export const signUpOrganizerThunk = createAsyncThunk(
+  'auth/signUpOrganizer',
+  async () => {
+    try {
+      const token = await getToken();
+
+      console.log(`Bearer ${token}`);
+
+      const res = await axios.post(
+        'http://localhost:8000/auth-management/signup/organizer',
+        {},
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const resData: FetchUser = res.data;
+
+      login(res.data.data.tokens);
+
+      console.log(resData);
+
+      return {
+        id: resData.data.user.id,
+        name: resData.data.user.name,
+        email: resData.data.user.email,
+        role: resData.data.user.userRoles.map((data) => data.roleId),
+      } as User;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);
+
 export const getSessionThunk = createAsyncThunk('auth/getSession', async () => {
   try {
     const auth = await getSession();
 
-    console.log(auth)
+    console.log(auth);
 
     if (!auth) {
       return undefined;

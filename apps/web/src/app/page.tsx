@@ -78,21 +78,7 @@ export default function Home() {
                   <CarouselItem className="basis-1/5">
                     <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
                   </CarouselItem>
-                  <CarouselItem className="basis-1/5">
-                    <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
-                  </CarouselItem>
-                  <CarouselItem className="basis-1/5">
-                    <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
-                  </CarouselItem>
-                  <CarouselItem className="basis-1/5">
-                    <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
-                  </CarouselItem>
-                  <CarouselItem className="basis-1/5">
-                    <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
-                  </CarouselItem>
-                  <CarouselItem className="basis-1/5">
-                    <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
-                  </CarouselItem>
+                  
                 </CarouselContent>
                 <CarouselPrevious className="left-0 group-hover:-left-4 !opacity-0 group-hover:!opacity-100 transition-all" />
                 <CarouselNext className="right-0 group-hover:-right-4 !opacity-0 group-hover:!opacity-100 transition-all" />

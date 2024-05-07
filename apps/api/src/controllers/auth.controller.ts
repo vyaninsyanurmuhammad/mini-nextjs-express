@@ -182,9 +182,9 @@ const signUpUser = async (req: Request, res: Response) => {
 };
 
 const signInUser = async (req: Request, res: Response) => {
-  const { email, password }: { email: string; password: string } = req.body;
-
   try {
+    const { email, password }: { email: string; password: string } = req.body;
+
     const existUser: UserModel | undefined | null =
       await prisma.user.findUnique({
         where: {
@@ -248,4 +248,71 @@ const signInUser = async (req: Request, res: Response) => {
   }
 };
 
-export default { signUpUser, signInUser };
+const signUpAsOrganizer = async (req: Request, res: Response) => {
+  try {
+    const {
+      user,
+    }: { user: { id: string; name: string; email: string; role: number[] } } =
+      req.body;
+
+    const existUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      include: {
+        userRoles: true,
+      },
+    });
+
+    if (!existUser) {
+      return res.status(401).send({
+        status: 401,
+        success: false,
+        message: 'invalid account',
+      });
+    }
+
+    const updateUserRole: UserModel | undefined | null  = await prisma.user.update({
+      where: { id: existUser.id },
+      data: {
+        userRoles: {
+          create: {
+            roleId: 2,
+          },
+        },
+      },
+      include: {
+        userRoles: true,
+      },
+    });
+
+    const accessToken = jwt.sign(
+      {
+        id: updateUserRole.id,
+        name: updateUserRole.name,
+        email: updateUserRole.email,
+        role: updateUserRole.userRoles.map((data) => data.roleId),
+      },
+      process.env.SECRET_KEY ?? 'my-secret-key',
+      { expiresIn: '1h' },
+    );
+
+    delete updateUserRole.password;
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'add organizer role successfully',
+      data: { user: updateUserRole, tokens: accessToken },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+
+export default { signUpUser, signInUser, signUpAsOrganizer };

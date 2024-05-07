@@ -68,3 +68,5 @@ const addEvents = async (req: Request, res: Response) => {
     });
   }
 };
+
+export default { addEvents };

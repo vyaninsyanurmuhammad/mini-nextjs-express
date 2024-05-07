@@ -1,35 +1,32 @@
 import prisma from '../prisma';
 import { Request, Response } from 'express';
 
-const getPointByOwnerId = async (req: Request, res: Response) => {
+const getDiscountsByOwnerId = async (req: Request, res: Response) => {
   const { user } = req.body;
   try {
-    const getPointByOwnerIdPrisma = await prisma.pointsWallet.findFirst({
+    const getDiscountsByOwnerIdPrisma = await prisma.discountsWallet.findFirst({
       where: {
         userId: user.id,
       },
       include: {
-        pointsTransactions: {
+        discountTransaction: {
           where: {
             expiredAt: {
               gt: new Date(),
             },
           },
+          include: {
+            CouponDiscount: true,
+          },
         },
       },
     });
 
-    let totalPoints = 0;
-
-    getPointByOwnerIdPrisma?.pointsTransactions.forEach(
-      (data) => (totalPoints += data.points),
-    );
-
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'get point successfully',
-      data: { ...getPointByOwnerIdPrisma, totalPoints },
+      message: 'get discount vouchers successfully',
+      data: { ...getDiscountsByOwnerIdPrisma },
     });
   } catch (error) {
     console.log(error);
@@ -42,4 +39,4 @@ const getPointByOwnerId = async (req: Request, res: Response) => {
   }
 };
 
-export default { getPointByOwnerId };
+export default { getDiscountsByOwnerId };

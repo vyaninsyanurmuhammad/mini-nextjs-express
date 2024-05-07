@@ -28,6 +28,14 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import {
   Settings,
   Mail,
   MessageSquare,
@@ -39,6 +47,7 @@ import {
   Store,
   Wallet,
   BadgePercent,
+  Menu,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import LocalTooltips from './local-tooltips';
@@ -48,7 +57,7 @@ import { getSessionThunk, logOutThunk } from '@/redux/features/auth-thunk';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { useRouter } from 'next/navigation';
 import { getPointThunk } from '@/redux/features/app-thunk';
-import { pointDismiss } from '@/redux/features/app-slice';
+import { discountDismiss, pointDismiss } from '@/redux/features/app-slice';
 
 const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
   const dispatch = useAppDispatch();
@@ -60,7 +69,7 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
     if (!user) {
       dispatch(getSessionThunk());
     } else {
-      dispatch(getPointThunk(user.id));
+      dispatch(getPointThunk());
     }
   }, [user]);
 
@@ -68,15 +77,18 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
     <>
       <div className="sticky h-fit w-screen top-0 z-20 px-12 py-4 bg-white flex flex-row items-center justify-between border-b-[1px] border-b-slate-300 shadow-lg">
         <div className="w-full h-fit inline-flex">
-          <Link href={'/'} className="h-fit w-fit inline-flex flex-row gap-2 text-slate-blue-800">
+          <Link
+            href={'/'}
+            className="h-fit w-fit inline-flex flex-row gap-2 text-slate-blue-800"
+          >
             <Confetti weight="bold" size={32} />
-            <span className="text-2xl font-extrabold tracking-tighter">
+            <span className="hidden lg:flex text-2xl font-extrabold tracking-tighter">
               ShowTime! <span>{user ? user.role[0] : 'null'}</span>
             </span>
           </Link>
         </div>
         {isSearch && (
-          <div className="w-full">
+          <div className="hidden lg:flex w-full">
             <InputSearch
               className="rounded-full bg-slate-100 focus:!ring-slate-blue-800"
               type="text"
@@ -85,7 +97,7 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
           </div>
         )}
 
-        <div className="w-full flex flex-row gap-4 justify-end items-center">
+        <div className="hidden lg:flex w-full flex-row gap-4 justify-end items-center">
           {user ? (
             <>
               <div className="flex items-center gap-2.5">
@@ -98,7 +110,9 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                 <DropdownMenuTrigger asChild className="focus:!ring-0">
                   <Button className="rounded-full w-fit flex gap-4 px-0 bg-white hover:bg-white focus:!ring-0 focus-visible:ring-offset-0">
                     <div className="w-10 h-10 rounded-full bg-slate-blue-800 flex flex-shrink-0 justify-center items-center">
-                      <span className="font-bold text-white text-sm">VY</span>
+                      <span className="font-bold text-white text-sm">
+                        {user.name[0].toLocaleUpperCase()}
+                      </span>
                     </div>
 
                     <div className="w-32 overflow-hidden flex flex-col items-start justify-start tracking-tight">
@@ -132,7 +146,7 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                     </DropdownMenuItem>
                   </Link>
 
-                  <Link href={'/dashboard/store'}>
+                  <Link href={'/dashboard/discount'}>
                     <DropdownMenuItem>
                       <BadgePercent className="mr-2 h-4 w-4" />
                       <span>My Discount</span>
@@ -151,6 +165,7 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                     onClick={async () => {
                       dispatch(logOutThunk());
                       dispatch(pointDismiss());
+                      dispatch(discountDismiss());
 
                       router.push('/auth/signin');
                     }}
@@ -169,6 +184,22 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
             </Link>
           )}
         </div>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button className="flex lg:hidden rounded-full">
+              <Menu />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side={"top"}>
+            <SheetHeader>
+              <SheetTitle>Are you absolutely sure?</SheetTitle>
+              <SheetDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
       </div>
     </>
   );

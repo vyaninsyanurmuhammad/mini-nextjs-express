@@ -1,15 +1,20 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { FetchPoint } from '@/models/point-model';
-import { getPointThunk } from './app-thunk';
+import { getDiscountsThunk, getPointThunk } from './app-thunk';
+import { FetchDiscount } from "@/models/discount-model";
 
 type InitialState = {
   point?: FetchPoint;
+  discount?: FetchDiscount;
   getPointLoading: boolean;
+  getDiscountLoading: boolean;
 };
 
 const initialState: InitialState = {
   point: undefined,
+  discount: undefined,
   getPointLoading: false,
+  getDiscountLoading: false,
 };
 
 const appSlice = createSlice({
@@ -17,8 +22,10 @@ const appSlice = createSlice({
   initialState,
   reducers: {
     pointDismiss: (state) => {
-      console.log('dismiss');
       state.point = undefined;
+    },
+    discountDismiss: (state) => {
+      state.discount = undefined;
     },
   },
   extraReducers(builder) {
@@ -32,8 +39,18 @@ const appSlice = createSlice({
     builder.addCase(getPointThunk.rejected, (state, action) => {
       state.getPointLoading = false;
     });
+    builder.addCase(getDiscountsThunk.pending, (state, action) => {
+      state.getPointLoading = true;
+    });
+    builder.addCase(getDiscountsThunk.fulfilled, (state, action) => {
+      state.discount = action.payload;
+      state.getPointLoading = false;
+    });
+    builder.addCase(getDiscountsThunk.rejected, (state, action) => {
+      state.getPointLoading = false;
+    });
   },
 });
 
-export const { pointDismiss } = appSlice.actions;
+export const { pointDismiss, discountDismiss } = appSlice.actions;
 export default appSlice.reducer;
