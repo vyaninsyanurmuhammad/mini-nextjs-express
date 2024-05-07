@@ -4,9 +4,9 @@ import React, { ReactNode } from 'react';
 const layoutDashboard = ({ children }: { children: ReactNode }) => {
   return (
     <>
-      <div className="flex flex-col bg-slate-50 h-screen w-screen overflow-x-hidden">
+      <div className="flex flex-col bg-slate-100 h-screen w-screen overflow-x-hidden">
         <HomeNavbar />
-        <main className="h-full bg-slate-100">{children}</main>
+        <main className="h-fit w-full shrink-0 flex">{children}</main>
       </div>
     </>
   );
