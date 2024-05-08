@@ -59,8 +59,6 @@ const CheckOutPage = () => {
     return result;
   };
 
-  const waysY = [7, 15, 23, 31];
-  const waysX = [4, 9, 14, 19];
   const unavailableSeats = [
     { y: 'A', x: 12 },
     { y: 'D', x: 20 },
@@ -103,9 +101,7 @@ const CheckOutPage = () => {
                     return (
                       <div
                         key={indexA}
-                        className={`flex gap-3 items-end ${
-                          waysX.includes(indexA) ? 'mb-8' : ''
-                        }`}
+                        className={`flex gap-3 items-end`}
                       >
                         <div className="h-12 w-12 flex shrink-0 justify-center items-center text-slate-blue-800 font-semibold">
                           {numberToTitle(indexA + 1)}
@@ -123,8 +119,6 @@ const CheckOutPage = () => {
                               )}
                               <Button
                                 className={`shrink-0 w-12 h-12 ring-1 rounded-md flex justify-center items-center text-xs ${
-                                  waysY.includes(dataB.x) ? 'mr-8' : ''
-                                } ${
                                   selectedSeats.some(
                                     (obj) =>
                                       obj.y === dataB.y && obj.x === dataB.x,

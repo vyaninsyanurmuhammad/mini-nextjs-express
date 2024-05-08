@@ -10,8 +10,8 @@ import {
 const TicketActiveCard = () => {
   return (
     <>
-      <div className="h-fit relative flex gap-4 rounded-xl bg-white p-2 shadow-xl">
-        <div className="h-48 w-80 shrink-0 rounded-lg bg-slate-blue-800"></div>
+      <div className="h-fit relative flex flex-col sm:flex-row gap-4 rounded-xl bg-white p-2 shadow-xl">
+        <div className="h-48 w-full sm:w-80 sm:shrink-0 rounded-lg bg-slate-blue-800"></div>
         <div className="h-auto relative shrink grow justify-center flex flex-col gap-3">
           <h2 className="text-xl font-semibold text-slate-800 tracking-tighter">
             Iwan Fals Concert

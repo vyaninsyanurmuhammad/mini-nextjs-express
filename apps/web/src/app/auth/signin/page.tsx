@@ -72,7 +72,7 @@ const Signin = () => {
             </div>
           </div>
 
-          <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-24 gap-10">
+          <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-8 lg:px-24 gap-10">
             <div className="w-full flex flex-col items-center gap-2.5">
               <h1 className="text-3xl font-semibold tracking-tighter text-slate-800">
                 Welcome back!
@@ -101,6 +101,9 @@ const Signin = () => {
                     value={formik.values.email}
                     onChange={formik.handleChange}
                   />
+                    {Boolean(formik.errors.email) && (
+                    <span className="text-sm text-red-500">{formik.errors.email}</span>
+                  )}
                 </div>
                 <div className="w-full flex flex-col gap-2.5">
                   <Label>Password</Label>
@@ -116,6 +119,9 @@ const Signin = () => {
                     value={formik.values.password}
                     onChange={formik.handleChange}
                   />
+                    {Boolean(formik.errors.password) && (
+                    <span className="text-sm text-red-500">{formik.errors.password}</span>
+                  )}
                 </div>
               </div>
               <Button

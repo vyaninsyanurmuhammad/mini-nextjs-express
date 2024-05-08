@@ -11,8 +11,10 @@ import cors from 'cors';
 import { PORT } from './config';
 import roleRouter from './routers/role.router';
 import authRouter from './routers/auth.router';
-import pointRouter from "./routers/point.router";
-import discountRouter from "./routers/discount.router";
+import pointRouter from './routers/point.router';
+import discountRouter from './routers/discount.router';
+import eventRouter from './routers/event.router';
+import * as path from 'path';
 
 function configureApp(): Express {
   const app = express();
@@ -48,7 +50,10 @@ function setRoutes(app: Express): void {
   app.use('/role-management/', roleRouter);
   app.use('/point-management/', pointRouter);
   app.use('/discount-management/', discountRouter);
+  app.use('/event-management/', eventRouter);
   app.use('/auth-management/', authRouter);
+
+  app.use(express.static(path.join(__dirname, '../public')));
 }
 
 function startServer(app: Express): void {

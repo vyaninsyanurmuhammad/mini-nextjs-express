@@ -125,6 +125,7 @@ model Event {
   price             Float
   eventLocation     String
   eventAt           DateTime
+  eventImage        String
   User              User                @relation(fields: [ownerId], references: [id])
   ownerId           String
   createdAt         DateTime            @default(now())
@@ -138,7 +139,7 @@ model Event {
 }
 
 model Category {
-  id            String          @id @default(uuid())
+  id            Int             @id @default(autoincrement())
   title         String
   EventCategory EventCategory[]
 
@@ -150,7 +151,7 @@ model EventCategory {
   Event      Event    @relation(fields: [eventId], references: [id])
   eventId    String
   Category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String
+  categoryId Int
 
   @@map("eventCategories")
 }
@@ -159,8 +160,6 @@ model SeatEvent {
   id         String   @id @default(uuid())
   Event      Event    @relation(fields: [eventId], references: [id])
   eventId    String   @unique
-  wayX       Int
-  wayY       String
   dimensionX Int
   dimensionY Int
   createdAt  DateTime @default(now())

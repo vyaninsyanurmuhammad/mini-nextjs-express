@@ -48,6 +48,7 @@ import {
   Wallet,
   BadgePercent,
   Menu,
+  Search,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import LocalTooltips from './local-tooltips';
@@ -96,11 +97,29 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
             />
           </div>
         )}
+        <div className="w-full flex justify-center lg:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button className="px-0 aspect-square rounded-full">
+                <Search />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side={'top'}>
+              <SheetHeader>
+                <SheetTitle>Are you absolutely sure?</SheetTitle>
+                <SheetDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </SheetDescription>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+        </div>
 
-        <div className="hidden lg:flex w-full flex-row gap-4 justify-end items-center">
+        <div className="flex w-full flex-row gap-4 justify-end items-center">
           {user ? (
             <>
-              <div className="flex items-center gap-2.5">
+              <div className="hidden lg:flex items-center gap-2.5">
                 <Wallet />
                 <span className="text-slate-blue-800">
                   {point ? point.data.totalPoints : 0} P
@@ -108,29 +127,46 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild className="focus:!ring-0">
-                  <Button className="rounded-full w-fit flex gap-4 px-0 bg-white hover:bg-white focus:!ring-0 focus-visible:ring-offset-0">
-                    <div className="w-10 h-10 rounded-full bg-slate-blue-800 flex flex-shrink-0 justify-center items-center">
-                      <span className="font-bold text-white text-sm">
-                        {user.name[0].toLocaleUpperCase()}
-                      </span>
-                    </div>
+                  <Button className="rounded-full w-fit flex bg-white hover:bg-white focus:!ring-0 focus-visible:ring-offset-0">
+                    <LocalTooltips
+                      align="end"
+                      content={`${user.name} | ${user.email}`}
+                    >
+                      <div className="flex gap-4 px-0 ">
+                        <div className="w-10 h-10 rounded-full bg-slate-blue-800 flex flex-shrink-0 justify-center items-center">
+                          <span className="font-bold text-white text-sm">
+                            {user.name[0].toLocaleUpperCase()}
+                          </span>
+                        </div>
 
-                    <div className="w-32 overflow-hidden flex flex-col items-start justify-start tracking-tight">
-                      <LocalTooltips align="end" content={user.name}>
-                        <p className="w-full text-start text-slate-800 font-medium truncate">
-                          {user.name}
-                        </p>
-                      </LocalTooltips>
-                      <LocalTooltips align="end" content={user.email}>
-                        <p className="w-full text-start text-slate-500 text-xs truncate">
-                          {user.email}
-                        </p>
-                      </LocalTooltips>
-                    </div>
+                        <div className="w-32 overflow-hidden hidden lg:flex flex-col items-start justify-start tracking-tight">
+                          <p className="w-full text-start text-slate-800 font-medium truncate">
+                            {user.name}
+                          </p>
+                          <p className="w-full text-start text-slate-500 text-xs truncate">
+                            {user.email}
+                          </p>
+                        </div>
+                      </div>
+                    </LocalTooltips>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="flex lg:hidden"/>
+                  <DropdownMenuLabel className="flex lg:hidden">
+                    <span>{user.name}</span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuLabel className="flex lg:hidden">
+                    <span>{user.email}</span>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator className="flex lg:hidden" />
+                  <DropdownMenuLabel className="flex lg:hidden">
+                    <Wallet className="mr-2 h-4 w-4" />
+                    <span className="text-slate-blue-800">
+                      {point ? point.data.totalPoints : 0} P
+                    </span>
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <Link href={'/dashboard/profile'}>
                     <DropdownMenuItem>
@@ -184,22 +220,6 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
             </Link>
           )}
         </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button className="flex lg:hidden rounded-full">
-              <Menu />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side={"top"}>
-            <SheetHeader>
-              <SheetTitle>Are you absolutely sure?</SheetTitle>
-              <SheetDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
       </div>
     </>
   );

@@ -69,13 +69,13 @@ export default function Home() {
                 // ]}
               >
                 <CarouselContent>
-                  <CarouselItem className="basis-1/5">
+                  <CarouselItem className="basis-full md:basis-1/3 xl:basis-1/5">
                     <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
                   </CarouselItem>
-                  <CarouselItem className="basis-1/5">
+                  <CarouselItem className="basis-full md:basis-1/3 xl:basis-1/5">
                     <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
                   </CarouselItem>
-                  <CarouselItem className="basis-1/5">
+                  <CarouselItem className="basis-full md:basis-1/3 xl:basis-1/5">
                     <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
                   </CarouselItem>
                   
@@ -85,7 +85,7 @@ export default function Home() {
               </Carousel>
             </div>
           </div>
-          <div className="flex flex-row gap-8 px-12">
+          <div className="flex flex-col md:flex-row gap-8 px-12">
             <div className="rounded-xl h-64 w-full bg-slate-blue-800 p-12 flex flex-col gap-3 justify-end">
               <h2 className="text-white text-4xl font-bold tracking-tighter">
                 Get Special Discounts For You

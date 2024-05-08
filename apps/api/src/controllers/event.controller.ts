@@ -1,7 +1,7 @@
 import prisma from '../prisma';
 import { Request, Response } from 'express';
 
-const addEvents = async (req: Request, res: Response) => {
+const addEvent = async (req: Request, res: Response) => {
   try {
     const {
       user,
@@ -9,34 +9,56 @@ const addEvents = async (req: Request, res: Response) => {
       description,
       price,
       location,
-      eventTime,
+      dateTime,
       categories,
-      seatEvent,
+      dimensionX,
+      dimensionY,
     } = req.body;
 
+    const { file } = req;
+
+    console.log(
+      user,
+      title,
+      description,
+      price,
+      location,
+      dateTime,
+      categories,
+      dimensionX,
+      dimensionY,
+      file,
+    );
+
     if (
+      !user ||
       !title ||
       !description ||
       !price ||
       !location ||
-      !eventTime ||
+      !dateTime ||
       !categories ||
-      !seatEvent
+      !dimensionX ||
+      !dimensionY ||
+      !file
     ) {
-      return res.status(403).send({
-        status: 401,
+      return res.status(202).send({
+        status: 202,
         success: false,
         message: 'input invalid',
       });
     }
 
+    const categoriesParsed: string[] = JSON.parse(categories);
+
     const addEvent = await prisma.event.create({
       data: {
         title,
         description,
-        price,
-        eventAt: eventTime,
+        price: Number(price),
+        eventAt: new Date(dateTime),
         eventLocation: location,
+        eventImage: file.filename,
         User: {
           connect: {
             id: user.id,
@@ -45,18 +67,80 @@ const addEvents = async (req: Request, res: Response) => {
         EventRating: {
           create: {},
         },
-
-        EventCategory: {
-          create: [],
+        SeatEvent: {
+          create: {
+            dimensionX: Number(dimensionX),
+            dimensionY: Number(dimensionY),
+          },
         },
+      },
+    });
+
+    const findcategories = await prisma.category.findMany({
+      where: {
+        title: {
+          in: categoriesParsed,
+        },
+      },
+    });
+
+    const categoriesNorExist = categoriesParsed.filter(
+      (itemA) => !findcategories.some((itemB) => itemB.title === itemA),
+    );
+
+    if (categoriesNorExist) {
+      for (let i = 0; i < categoriesNorExist.length; i++) {
+        await prisma.category.create({
+          data: {
+            title: categoriesNorExist[i],
+          },
+        });
+      }
+    }
+
+    const findFinalcategories = await prisma.category.findMany({
+      where: {
+        title: {
+          in: categoriesParsed,
+        },
+      },
+    });
+
+    const eventsCat = findFinalcategories.map((data) => {
+      return { eventId: addEvent.id, categoryId: data.id };
+    });
+
+    const addEventCategories = await prisma.eventCategory.createMany({
+      data: [...eventsCat],
+    });
+
+    const findEvent = await prisma.event.findUnique({
+      where: {
+        id: addEvent.id,
+      },
+      include: {
+        EventCategory: {
+          include: {
+            Category: {
+              select: {
+                id: false,
+                title: true,
+              },
+            },
+          },
+        },
+        EventRating: true,
+        SeatEvent: true,
       },
     });
 
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'add role successfully',
-      data: addEvent,
+      message: 'add event successfully',
+      data: {
+        ...findEvent,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -69,4 +153,4 @@ const addEvents = async (req: Request, res: Response) => {
   }
 };
 
-export default { addEvents };
+export default { addEvent };

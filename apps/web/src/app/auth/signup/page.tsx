@@ -77,7 +77,7 @@ const Signup = () => {
               </span>
             </div>
           </div>
-          <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-24 gap-10">
+          <div className="w-full lg:w-1/2 flex flex-col items-center justify-center px-8 lg:px-24 gap-10">
             <div className="w-full flex flex-col items-center gap-2.5">
               <h1 className="text-3xl font-semibold tracking-tighter text-slate-800">
                 Create a new account
@@ -106,6 +106,11 @@ const Signup = () => {
                     value={formik.values.name}
                     onChange={formik.handleChange}
                   />
+                  {Boolean(formik.errors.name) && (
+                    <span className="text-sm text-red-500">
+                      {formik.errors.name}
+                    </span>
+                  )}
                 </div>
                 <div className="w-full flex flex-col gap-2.5">
                   <Label>Email</Label>
@@ -121,6 +126,11 @@ const Signup = () => {
                     value={formik.values.email}
                     onChange={formik.handleChange}
                   />
+                  {Boolean(formik.errors.email) && (
+                    <span className="text-sm text-red-500">
+                      {formik.errors.email}
+                    </span>
+                  )}
                 </div>
                 <div className="w-full flex flex-col gap-2.5">
                   <Label>Password</Label>
@@ -136,7 +146,11 @@ const Signup = () => {
                     value={formik.values.password}
                     onChange={formik.handleChange}
                   />
-                  <span>{formik.errors.password}</span>
+                  {Boolean(formik.errors.password) && (
+                    <span className="text-sm text-red-500">
+                      {formik.errors.password}
+                    </span>
+                  )}
                 </div>
                 <div className="w-full flex flex-col gap-2.5">
                   <Label>Referral code (optional)</Label>
