@@ -119,21 +119,21 @@ model DiscountTransaction {
 }
 
 model Event {
-  id                String              @id @default(uuid())
-  title             String
-  description       String
-  price             Float
-  eventLocation     String
-  eventAt           DateTime
-  eventImage        String
-  User              User                @relation(fields: [ownerId], references: [id])
-  ownerId           String
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  EventCategory     EventCategory[]
-  SeatEvent         SeatEvent?
-  EventRating       EventRating?
-  TicketTransaction TicketTransaction[]
+  id               String             @id @default(uuid())
+  title            String
+  description      String             @db.VarChar(500)
+  price            Float
+  eventLocation    String
+  eventAt          DateTime
+  eventImage       String
+  User             User               @relation(fields: [ownerId], references: [id])
+  ownerId          String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  EventCategory    EventCategory[]
+  SeatEvent        SeatEvent?
+  EventRating      EventRating?
+  EventTransaction EventTransaction[]
 
   @@map("events")
 }
@@ -200,14 +200,14 @@ model EventTransaction {
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   TicketTransaction TicketTransaction[]
+  Event             Event               @relation(fields: [eventId], references: [id])
+  eventId           String
 
   @@map("eventTransactions")
 }
 
 model TicketTransaction {
   id                 String           @id @default(uuid())
-  Event              Event            @relation(fields: [eventId], references: [id])
-  eventId            String
   EventTransaction   EventTransaction @relation(fields: [eventTransactionId], references: [id])
   eventTransactionId String
   seatNumberX        Int

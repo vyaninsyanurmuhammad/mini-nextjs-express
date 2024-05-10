@@ -21,40 +21,33 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { SeatPositionType } from '@/models/seat-position-model';
 import { Separator } from './ui/separator';
-import { DiscountType } from '@/models/discount-model';
+import { DiscountTransaction, DiscountType } from '@/models/discount-model';
+import { useAppDispatch, useAppSelector } from '@/redux/hook';
+import { format } from 'date-fns';
+import { buyEventThunk, getDiscountsThunk } from '@/redux/features/app-thunk';
 
 const CheckoutOrderBox = ({
+  id,
+  harga,
   selectedSeats,
 }: {
+  id: string;
+  harga: number;
   selectedSeats: SeatPositionType[];
 }) => {
+  const dispatch = useAppDispatch();
+
   const [isPointUsed, setIsPointUsed] = useState(false);
-  const [isDiscount, setIsDiscount] = useState<DiscountType | null | undefined>(
-    null,
-  );
-
-  const harga = 250000;
-  const points = 20000;
-
-  const discounts: DiscountType[] = [
-    {
-      id: '1231313131',
-      title: 'Discount akhir tahun',
-      total: 50,
-      owner: 'Vyan Insya Nur M',
-      expiredAt: '12/12/2024',
-    },
-    {
-      id: '1331442322443',
-      title: 'Discount awal tahun',
-      total: 30,
-      owner: 'Vyan Insya Nur M',
-      expiredAt: '12/12/2024',
-    },
-  ];
+  const [isDiscount, setIsDiscount] = useState<
+    DiscountTransaction | null | undefined
+  >(null);
+  const point = useAppSelector((state) => state.appReducer.point);
+  const discount = useAppSelector((state) => state.appReducer.discount);
+  const [points, setPoints] = useState(0);
+  const [discounts, setDiscounts] = useState<DiscountTransaction[]>([]);
 
   const onSetIsPointUsedClick = () => setIsPointUsed(!isPointUsed);
-  const onSetIsDiscountClick = (discount: DiscountType) =>
+  const onSetIsDiscountClick = (discount: DiscountTransaction) =>
     setIsDiscount(discount.id === isDiscount?.id ? null : discount);
 
   const hitungBill = (
@@ -76,6 +69,29 @@ const CheckoutOrderBox = ({
     return totalBayar;
   };
 
+  const onBuyOnClick = () => {
+    dispatch(
+      buyEventThunk({
+        id,
+        buy: {
+          total: selectedSeats.length * harga,
+          pointsReduce: points,
+          discountReduce: isDiscount ? isDiscount.id : undefined,
+          seats: selectedSeats,
+        },
+      }),
+    );
+  };
+
+  useEffect(() => {
+    if (point) {
+      setPoints(point.data.totalPoints);
+    }
+    if (discount) {
+      setDiscounts(discount.data.discountTransaction);
+    }
+  }, []);
+
   return (
     <>
       <div className="sticky top-24 w-fit h-fit flex flex-col gap-8 justify-between items-center">
@@ -86,6 +102,7 @@ const CheckoutOrderBox = ({
                 ? 'bg-slate-blue-800 hover:bg-slate-blue-800/90 text-white'
                 : 'text-slate-800 bg-white hover:bg-slate-50'
             }`}
+            disabled={points === 0}
             onClick={onSetIsPointUsedClick}
           >
             <PiggyBank size={24} />
@@ -104,7 +121,7 @@ const CheckoutOrderBox = ({
             </span>
           </Button>
           <Dialog>
-            <DialogTrigger asChild>
+            <DialogTrigger asChild disabled={harga === 0}>
               <Button
                 className={`w-full flex justify-start gap-2.5 rounded-full tracking-tight ring-[1px] ring-slate-300 ${
                   isDiscount
@@ -115,7 +132,7 @@ const CheckoutOrderBox = ({
                 <SealPercent size={24} />
                 <span>
                   {isDiscount
-                    ? `${isDiscount.total}% discount selected`
+                    ? `${isDiscount.CouponDiscount.total}% discount selected`
                     : 'Select discount'}
                 </span>
               </Button>
@@ -137,6 +154,7 @@ const CheckoutOrderBox = ({
                   {discounts.map((discount, index) => (
                     <Button
                       key={`${discount.id}-${index}`}
+                      disabled={discount.isUsed}
                       className={`w-full h-fit rounded-lg p-4 flex flex-col items-start gap-2.5 ring-[1px] ring-slate-200 ${
                         isDiscount?.id === discount.id
                           ? 'bg-blue-crayola-900 hover:bg-blue-crayola-800'
@@ -152,16 +170,8 @@ const CheckoutOrderBox = ({
                               : 'text-slate-800'
                           }`}
                         >
-                          {discount.title}&nbsp;{discount.total}%
-                        </p>
-                        <p
-                          className={`tracking-tighter text-sm font-normal ${
-                            isDiscount?.id === discount.id
-                              ? 'text-slate-200'
-                              : 'text-slate-600'
-                          }`}
-                        >
-                          from&nbsp;{discount.owner}
+                          {discount.CouponDiscount.title}&nbsp;
+                          {discount.CouponDiscount.total}%
                         </p>
                       </div>
 
@@ -172,7 +182,11 @@ const CheckoutOrderBox = ({
                             : 'text-slate-800'
                         }`}
                       >
-                        expired at&nbsp;{discount.expiredAt}
+                        expired at&nbsp;{' '}
+                        {format(
+                          new Date(discount.expiredAt).toLocaleDateString(),
+                          'PPP',
+                        )}
                       </p>
                     </Button>
                   ))}
@@ -236,7 +250,7 @@ const CheckoutOrderBox = ({
                   <p className="w-full flex justify-between tracking-tight text-slate-800 text-sm font-semibold">
                     Discount :&nbsp;
                     <span className="font-semibold text-sm">
-                      -{isDiscount.total}%
+                      -{isDiscount.CouponDiscount.total}%
                     </span>
                   </p>
                 )}
@@ -252,7 +266,7 @@ const CheckoutOrderBox = ({
                   {hitungBill(
                     selectedSeats.length * harga,
                     isPointUsed ? points : 0,
-                    isDiscount ? isDiscount.total : 0,
+                    isDiscount ? isDiscount.CouponDiscount.total : 0,
                   ).toLocaleString('id-ID', {
                     currency: 'IDR',
                   })}
@@ -261,7 +275,10 @@ const CheckoutOrderBox = ({
             </div>
           </div>
 
-          <Button className="w-full flex gap-2.5 rounded-full tracking-tight bg-blue-crayola-900 hover:bg-blue-crayola-800">
+          <Button
+            className="w-full flex gap-2.5 rounded-full tracking-tight bg-blue-crayola-900 hover:bg-blue-crayola-800"
+            onClick={onBuyOnClick}
+          >
             <Ticket size={24} />
             <span>Pay ticket</span>
           </Button>

@@ -11,9 +11,22 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { getLatestEventsThunk } from '@/redux/features/app-thunk';
+import { useAppSelector, useAppDispatch } from '@/redux/hook';
+import { format } from "date-fns";
 import Autoplay from 'embla-carousel-autoplay';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function Home() {
+  const event = useAppSelector((state) => state.appReducer.events);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getLatestEventsThunk());
+  }, []);
+
   return (
     <>
       <div className="flex flex-col bg-slate-50 h-screen w-screen overflow-x-hidden">
@@ -69,16 +82,46 @@ export default function Home() {
                 // ]}
               >
                 <CarouselContent>
-                  <CarouselItem className="basis-full md:basis-1/3 xl:basis-1/5">
+                  {event.map((data, index) => (
+                    <CarouselItem
+                      key={`${data.id}-${index}`}
+                      className="basis-full md:basis-1/3 xl:basis-1/5"
+                    >
+                      <Link href={`/${data.id}`}>
+                        <CardEvent
+                          className="shadow-sm ring-1 ring-slate-200 my-1"
+                          src={data.eventImage}
+                          title={data.title}
+                          location={data.eventLocation}
+                          time={new Date(data.eventAt).toLocaleTimeString()}
+                          date={format(
+                            new Date(data.eventAt).toLocaleDateString(),
+                            'PPP',
+                          )}
+                          price={
+                            data.price === 0
+                              ? 'Free'
+                              : new Intl.NumberFormat('en-IN', {
+                                  style: 'currency',
+                                  currency: 'IDR',
+                                })
+                                  .format(data.price)
+                                  .toString()
+                          }
+                          categories={data.EventCategory.map(
+                            (cat) => cat.Category.title,
+                          )}
+                        />
+                      </Link>
+                    </CarouselItem>
+                  ))}
+
+                  {/* <CarouselItem className="basis-full md:basis-1/3 xl:basis-1/5">
                     <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
                   </CarouselItem>
                   <CarouselItem className="basis-full md:basis-1/3 xl:basis-1/5">
                     <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
-                  </CarouselItem>
-                  <CarouselItem className="basis-full md:basis-1/3 xl:basis-1/5">
-                    <CardEvent className="shadow-sm ring-1 ring-slate-200 my-1" />
-                  </CarouselItem>
-                  
+                  </CarouselItem> */}
                 </CarouselContent>
                 <CarouselPrevious className="left-0 group-hover:-left-4 !opacity-0 group-hover:!opacity-100 transition-all" />
                 <CarouselNext className="right-0 group-hover:-right-4 !opacity-0 group-hover:!opacity-100 transition-all" />

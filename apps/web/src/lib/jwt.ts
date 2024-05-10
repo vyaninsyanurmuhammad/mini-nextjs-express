@@ -35,3 +35,25 @@ export async function getSession() {
 export const getToken = () => {
   return cookies().get('session')?.value;
 };
+
+export async function isTokenExpired() {
+  try {
+    const session = cookies().get('session')?.value;
+
+    if (session) {
+      const { payload } = await jose.jwtVerify(session, encodedKey);
+
+      if (payload.exp) {
+        if (payload.exp < Date.now() / 1000) {
+          // Token is expired
+          return true;
+        }
+      }
+    }
+
+    return false;
+  } catch (error) {
+    // Token is invalid or couldn't be decoded
+    return true;
+  }
+}

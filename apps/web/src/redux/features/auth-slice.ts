@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
+  getIsTokenExpired,
   getSessionThunk,
   logOutThunk,
   signInThunk,
@@ -11,11 +12,13 @@ import { User } from '@/models/user-model';
 type InitialState = {
   user?: User;
   isAuthLoading: boolean;
+  isUserExpired: boolean;
 };
 
 const initialState: InitialState = {
   user: undefined,
   isAuthLoading: false,
+  isUserExpired: true,
 };
 
 const authSlice = createSlice({
@@ -72,6 +75,16 @@ const authSlice = createSlice({
     builder.addCase(logOutThunk.rejected, (state) => {
       state.isAuthLoading = false;
     });
+
+    builder.addCase(getIsTokenExpired.pending, (state) => {});
+    builder.addCase(getIsTokenExpired.fulfilled, (state, action) => {
+      state.isUserExpired = action.payload;
+
+      if (action.payload) {
+        state.user = undefined;
+      }
+    });
+    builder.addCase(getIsTokenExpired.rejected, (state) => {});
   },
 });
 

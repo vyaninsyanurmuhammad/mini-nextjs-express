@@ -10,10 +10,8 @@ const Discount = () => {
   const discount = useAppSelector((state) => state.appReducer.discount);
 
   useEffect(() => {
-    if (!discount) {
-      dispatch(getDiscountsThunk());
-    }
-  }, [discount]);
+    dispatch(getDiscountsThunk());
+  }, []);
 
   return (
     <>
@@ -24,23 +22,28 @@ const Discount = () => {
               discount.data.discountTransaction.map((data, index) => (
                 <div
                   key={`${data.id}-${index}`}
-                  className="w-full h-ft rounded-xl bg-slate-blue-800 px-12 py-12 flex gap-4"
+                  className="relative w-full h-fit rounded-xl overflow-hidden"
                 >
-                  <div className="w-full flex flex-col gap-2">
-                    <span className="text-4xl/none font-bold tracking-tighter text-white line-clamp-1">
-                      {data.CouponDiscount.title}
-                    </span>
-                    <span className="text-slate-800 font-medium tracking-tighter">
-                      Expired at{' '}
-                      <span className="text-white/50">
-                        {new Date(data.expiredAt).toUTCString()}
-                      </span>
-                    </span>
+                  <div className="absolute bg-slate-800/80 h-full w-full flex justify-center items-center text-white font-bold text-4xl">
+                   <span className="-rotate-12">USED</span> 
                   </div>
-                  <div className="w-fit flex shrink-0 px-8 py-2 justify-center items-center bg-white">
-                    <span className="text-5xl/none font-bold tracking-tighter text-blue-crayola-800">
-                      {data.CouponDiscount.total}% OFF
-                    </span>
+                  <div className="w-full flex flex-row gap-4 bg-slate-blue-800 px-12 py-12">
+                    <div className="w-full flex flex-col gap-2">
+                      <span className="text-4xl/none font-bold tracking-tighter text-white line-clamp-1">
+                        {data.CouponDiscount.title}
+                      </span>
+                      <span className="text-slate-800 font-medium tracking-tighter">
+                        Expired at{' '}
+                        <span className="text-white/50">
+                          {new Date(data.expiredAt).toUTCString()}
+                        </span>
+                      </span>
+                    </div>
+                    <div className="w-fit flex shrink-0 px-8 py-2 justify-center items-center bg-white">
+                      <span className="text-5xl/none font-bold tracking-tighter text-blue-crayola-800">
+                        {data.CouponDiscount.total}% OFF
+                      </span>
+                    </div>
                   </div>
                 </div>
               ))
@@ -48,7 +51,7 @@ const Discount = () => {
               <span>You don't have discount</span>
             )
           ) : (
-            <span>Walllet not founded</span>
+            <span>Wallet not founded</span>
           )}
         </div>
       </div>

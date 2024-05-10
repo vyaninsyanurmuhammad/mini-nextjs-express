@@ -54,7 +54,11 @@ import { Button } from './ui/button';
 import LocalTooltips from './local-tooltips';
 import { logout } from '@/lib/jwt';
 import Link from 'next/link';
-import { getSessionThunk, logOutThunk } from '@/redux/features/auth-thunk';
+import {
+  getIsTokenExpired,
+  getSessionThunk,
+  logOutThunk,
+} from '@/redux/features/auth-thunk';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { useRouter } from 'next/navigation';
 import { getPointThunk } from '@/redux/features/app-thunk';
@@ -64,9 +68,14 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.authReducer.user);
   const point = useAppSelector((state) => state.appReducer.point);
+  const isUserExpired = useAppSelector(
+    (state) => state.authReducer.isUserExpired,
+  );
   const router = useRouter();
 
   useEffect(() => {
+    dispatch(getIsTokenExpired());
+
     if (!user) {
       dispatch(getSessionThunk());
     } else {
@@ -117,7 +126,13 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
         </div>
 
         <div className="flex w-full flex-row gap-4 justify-end items-center">
-          {user ? (
+          {isUserExpired || !user ? (
+            <Link href="/auth/signin">
+              <Button className="bg-slate-blue-800 hover:bg-slate-blue-800/90">
+                Login
+              </Button>
+            </Link>
+          ) : (
             <>
               <div className="hidden lg:flex items-center gap-2.5">
                 <Wallet />
@@ -153,7 +168,7 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="flex lg:hidden"/>
+                  <DropdownMenuSeparator className="flex lg:hidden" />
                   <DropdownMenuLabel className="flex lg:hidden">
                     <span>{user.name}</span>
                   </DropdownMenuLabel>
@@ -212,12 +227,6 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
-          ) : (
-            <Link href="/auth/signin">
-              <Button className="bg-slate-blue-800 hover:bg-slate-blue-800/90">
-                Login
-              </Button>
-            </Link>
           )}
         </div>
       </div>

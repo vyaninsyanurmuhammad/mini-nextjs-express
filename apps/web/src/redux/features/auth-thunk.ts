@@ -1,4 +1,4 @@
-import { getSession, getToken, login, logout } from '@/lib/jwt';
+import { getSession, getToken, isTokenExpired, login, logout } from '@/lib/jwt';
 import {
   FetchUser,
   User,
@@ -121,4 +121,11 @@ export const logOutThunk = createAsyncThunk('auth/logout', async () => {
   await logout();
 
   return undefined;
+});
+
+
+export const getIsTokenExpired = createAsyncThunk('auth/isTokenExpired', async () => {
+  const isExpired = await isTokenExpired();
+
+  return isExpired;
 });

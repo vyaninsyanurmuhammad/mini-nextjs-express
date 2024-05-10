@@ -2,8 +2,9 @@ import prisma from '../prisma';
 import { Request, Response } from 'express';
 
 const getPointByOwnerId = async (req: Request, res: Response) => {
-  const { user } = req.body;
   try {
+    const { user } = req.body;
+
     const getPointByOwnerIdPrisma = await prisma.pointsWallet.findFirst({
       where: {
         userId: user.id,

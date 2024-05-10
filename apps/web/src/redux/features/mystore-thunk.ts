@@ -1,5 +1,10 @@
 import { getToken } from '@/lib/jwt';
-import { EventForm, FetchEvent } from '@/models/event-model';
+import {
+  EventForm,
+  FetchEvent,
+  FetchEventDetail,
+  FetchEvents,
+} from '@/models/event-model';
 import { FetchUser } from '@/models/user-model';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
@@ -27,7 +32,7 @@ export const addEventThunk = createAsyncThunk(
       console.log(formData);
 
       const res = await axios.post(
-        'http://localhost:8000/event-management/event',
+        'http://localhost:8000/event-management/store/event',
         formData,
         {
           headers: {
@@ -50,10 +55,78 @@ export const addEventThunk = createAsyncThunk(
   },
 );
 
-export const getEventsThunk = createAsyncThunk(
-  'mystore/getEvents',
+export const getEventsActiveThunk = createAsyncThunk(
+  'mystore/getEventsActive',
   async () => {
     try {
+      const token = await getToken();
+
+      const res = await axios.get(
+        'http://localhost:8000/event-management/store/events/active',
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const resData: FetchEvents = res.data;
+
+      console.log(resData);
+
+      return resData.data;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);
+
+export const getEventsInactiveThunk = createAsyncThunk(
+  'mystore/getEventsInactive',
+  async () => {
+    try {
+      const token = await getToken();
+
+      const res = await axios.get(
+        'http://localhost:8000/event-management/store/events/inactive',
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const resData: FetchEvents = res.data;
+
+      console.log(resData);
+
+      return resData.data;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);
+
+export const getEventActiveDetailThunk = createAsyncThunk(
+  'mystore/getEventActiveDetail',
+  async (id: string) => {
+    try {
+      const token = await getToken();
+
+      const res = await axios.get(
+        `http://localhost:8000/event-management/store/events/active/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const resData: FetchEventDetail = res.data;
+
+      console.log(resData);
+
+      return resData.data;
     } catch (error) {
       return undefined;
     }

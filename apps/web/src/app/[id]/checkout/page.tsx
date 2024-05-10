@@ -4,11 +4,25 @@ import CheckoutOrderBox from '@/components/checkout-order-box';
 import HomeNavbar from '@/components/home-navbar';
 import { Button } from '@/components/ui/button';
 import { SeatPositionType } from '@/models/seat-position-model';
-import React, { useState } from 'react';
+import { getDetailEventThunk } from '@/redux/features/app-thunk';
+import { useAppDispatch, useAppSelector } from '@/redux/hook';
+import { redirect, useParams, useSearchParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 const CheckOutPage = () => {
-  const seatDimemsion = [25, 40];
+  const dispatch = useAppDispatch();
+
+  const user = useAppSelector((state) => state.authReducer.user);
+  const event = useAppSelector((state) => state.appReducer.event);
+
+  const search = useParams<{ id: string }>();
+
+  const [seatDimemsion, setSeatDimemsion] = useState<number[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<SeatPositionType[]>([]);
+
+  const unavailableSeats = useAppSelector(
+    (state) => state.appReducer.unavailableSeat,
+  );
 
   const seatsArray = () => {
     const seatsA = [];
@@ -59,11 +73,6 @@ const CheckOutPage = () => {
     return result;
   };
 
-  const unavailableSeats = [
-    { y: 'A', x: 12 },
-    { y: 'D', x: 20 },
-  ];
-
   const onSelectedSeatClick = (data: { y: string; x: number }) =>
     selectedSeats.some((obj) => obj.y === data.y && obj.x === data.x)
       ? setSelectedSeats([
@@ -80,6 +89,21 @@ const CheckOutPage = () => {
       return valueA.localeCompare(valueB);
     });
 
+  useEffect(() => {
+    if (!user) {
+      redirect(`/${search.id}`);
+    }
+
+    dispatch(getDetailEventThunk(search.id));
+
+    if (event) {
+      setSeatDimemsion([
+        event.SeatEvent.dimensionX,
+        event.SeatEvent.dimensionY,
+      ]);
+    }
+  }, []);
+
   return (
     <>
       <div className="flex flex-col bg-slate-50 h-screen w-screen overflow-hidden">
@@ -88,7 +112,7 @@ const CheckOutPage = () => {
           <main className="h-full w-full flex flex-col gap-8 relative overflow-auto">
             <div className="flex flex-col gap-2.5">
               <h2 className="tracking-tighter text-xl font-semibold text-slate-800">
-                Select your seat
+                Select your seat {search.id}
               </h2>
             </div>
             <div className="h-full w-full flex flex-col gap-8 relative overflow-auto rounded-xl border-[1px] border-slate-200">
@@ -99,10 +123,7 @@ const CheckOutPage = () => {
                 <div className="flex flex-col gap-3 w-full h-full p-1">
                   {seatsArray().map((dataA, indexA) => {
                     return (
-                      <div
-                        key={indexA}
-                        className={`flex gap-3 items-end`}
-                      >
+                      <div key={indexA} className={`flex gap-3 items-end`}>
                         <div className="h-12 w-12 flex shrink-0 justify-center items-center text-slate-blue-800 font-semibold">
                           {numberToTitle(indexA + 1)}
                         </div>
@@ -151,7 +172,13 @@ const CheckOutPage = () => {
               </div>
             </div>
           </main>
-          <CheckoutOrderBox selectedSeats={sortSeats(selectedSeats)} />
+          {event && (
+            <CheckoutOrderBox
+              id={event.id}
+              harga={event.price}
+              selectedSeats={sortSeats(selectedSeats)}
+            />
+          )}
         </div>
       </div>
     </>

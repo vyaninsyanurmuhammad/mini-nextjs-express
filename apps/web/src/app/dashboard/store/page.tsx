@@ -41,11 +41,20 @@ import {
 } from '@/components/ui/command';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { addEventThunk } from '@/redux/features/mystore-thunk';
+import {
+  addEventThunk,
+  getEventsActiveThunk,
+  getEventsInactiveThunk,
+} from '@/redux/features/mystore-thunk';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Store = () => {
   const user = useAppSelector((state) => state.authReducer.user);
+  const events = useAppSelector((state) => state.mystoreReducer.events);
+  const inactiveEvents = useAppSelector(
+    (state) => state.mystoreReducer.inactiveEvents,
+  );
 
   const dispatch = useAppDispatch();
 
@@ -88,11 +97,13 @@ const Store = () => {
   const eventSchema = Yup.object({
     title: Yup.string()
       .required('Title is required')
-      .min(6, 'Must be exactly 5 digits minimum'),
+      .min(6, 'Must be exactly 5 digits minimum')
+      .max(191, 'Must be exactly 191 digits maximum'),
     description: Yup.string()
       .required('Title is required')
-      .min(6, 'Must be exactly 5 digits minimum'),
-    location: Yup.string().required('Location is required'),
+      .min(6, 'Must be exactly 5 digits minimum')
+      .max(500, 'Must be exactly 500 digits maximum'),
+    location: Yup.string().required('Location is required').max(191, 'Must be exactly 191 digits maximum'),
     date: Yup.date().required('Date is required'),
     time: Yup.string().required('Time is required'),
     price: Yup.number().required('Time is required, set 0 if free'),
@@ -152,6 +163,9 @@ const Store = () => {
         .filter((data) => data.state === true)
         .map((data) => data.text),
     );
+
+    dispatch(getEventsActiveThunk());
+    dispatch(getEventsInactiveThunk());
   }, [listCategory]);
 
   return (
@@ -291,6 +305,7 @@ const Store = () => {
                                     id="date"
                                     selected={date}
                                     onSelect={handleDateChange}
+                                    fromDate={new Date()}
                                     initialFocus
                                   />
                                 </PopoverContent>
@@ -497,23 +512,53 @@ const Store = () => {
                       </SheetContent>
                     </Sheet>
                   </div>
-                  <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
+                  {events.length > 0 ? (
+                    events.map((data, index) => (
+                      <Link
+                        key={`${data.id}-${index}`}
+                        href={`/dashboard/store/${data.id}`}
+                      >
+                        <TicketActiveCard
+                          src={data.eventImage}
+                          title={data.title}
+                          location={data.eventLocation}
+                          time={new Date(data.eventAt).toLocaleTimeString()}
+                          date={new Date(data.eventAt).toLocaleDateString()}
+                        />
+                      </Link>
+                    ))
+                  ) : (
+                    <>
+                      <span>You don't have active ticket</span>
+                    </>
+                  )}
                 </TabsContent>
                 <TabsContent
                   className="pt-6 gap-4 flex flex-col"
                   value="password"
                 >
+                  {inactiveEvents.length > 0 ? (
+                    inactiveEvents.map((data, index) => (
+                      <TicketActiveCard
+                        key={`${data.id}-${index}`}
+                        src={data.eventImage}
+                        title={data.title}
+                        location={data.eventLocation}
+                        time={new Date(data.eventAt).toLocaleTimeString()}
+                        date={new Date(data.eventAt).toLocaleDateString()}
+                      />
+                    ))
+                  ) : (
+                    <>
+                      <span>You don't have expired ticket</span>
+                    </>
+                  )}
+                  {/* <TicketActiveCard />
                   <TicketActiveCard />
                   <TicketActiveCard />
                   <TicketActiveCard />
                   <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
+                  <TicketActiveCard /> */}
                 </TabsContent>
               </Tabs>
             </>
