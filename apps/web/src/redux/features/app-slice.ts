@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { FetchPoint } from '@/models/point-model';
 import {
+  findEventThunk,
   getDetailEventThunk,
   getDiscountsThunk,
   getLatestEventsThunk,
@@ -19,6 +20,8 @@ type InitialState = {
   getEventsLoading: boolean;
   event?: DataEventHomeDetail;
   unavailableSeat: SeatPositionType[];
+  searchText: string;
+  searchEvents: DataEventHome[];
 };
 
 const initialState: InitialState = {
@@ -30,6 +33,8 @@ const initialState: InitialState = {
   events: [],
   event: undefined,
   unavailableSeat: [],
+  searchText: '',
+  searchEvents: [],
 };
 
 const appSlice = createSlice({
@@ -41,6 +46,9 @@ const appSlice = createSlice({
     },
     discountDismiss: (state) => {
       state.discount = undefined;
+    },
+    setSearchText: (state, action) => {
+      state.searchText = action.payload;
     },
   },
   extraReducers(builder) {
@@ -85,22 +93,33 @@ const appSlice = createSlice({
         state.event = action.payload;
 
         action.payload.EventTransaction.forEach((data) => {
-            state.unavailableSeat = [
-              ...state.unavailableSeat,
-              ...data.TicketTransaction.map((tik) => {
-                return { x: tik.seatNumberX, y: tik.seatNumberY };
-              }),
-            ];
-          });
-        
+          state.unavailableSeat = [
+            ...state.unavailableSeat,
+            ...data.TicketTransaction.map((tik) => {
+              return { x: tik.seatNumberX, y: tik.seatNumberY };
+            }),
+          ];
+        });
       }
       state.getEventsLoading = false;
     });
     builder.addCase(getDetailEventThunk.rejected, (state, action) => {
       state.getEventsLoading = false;
     });
+
+    builder.addCase(findEventThunk.pending, (state, action) => {
+      state.getEventsLoading = true;
+    });
+    builder.addCase(findEventThunk.fulfilled, (state, action) => {
+      if (action.payload) state.searchEvents = [...action.payload];
+      state.getEventsLoading = false;
+    });
+    builder.addCase(findEventThunk.rejected, (state, action) => {
+      state.getEventsLoading = false;
+    });
   },
 });
 
-export const { pointDismiss, discountDismiss } = appSlice.actions;
+export const { pointDismiss, discountDismiss, setSearchText } =
+  appSlice.actions;
 export default appSlice.reducer;

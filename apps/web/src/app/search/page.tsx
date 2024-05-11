@@ -20,6 +20,7 @@ export default function Search() {
           <HomeFilter />
           <div className="flex flex-col gap-8 w-full h-fit">
             <div className="grid grid-cols-4 gap-8 w-full h-full">
+              {/* <CardEvent />
               <CardEvent />
               <CardEvent />
               <CardEvent />
@@ -38,8 +39,7 @@ export default function Search() {
               <CardEvent />
               <CardEvent />
               <CardEvent />
-              <CardEvent />
-              <CardEvent />
+              <CardEvent /> */}
             </div>
             <Pagination>
               <PaginationContent>

@@ -16,7 +16,8 @@ import Link from 'next/link';
 const DetailCheckoutBox = ({ id, total }: { id: string; total: string }) => {
   return (
     <>
-      <div className="sticky top-24 w-96 h-fit flex flex-col gap-8 justify-between items-center bg-white ring-1 ring-slate-200 rounded-xl shadow-xl px-8 py-4">
+      <div className="fixed lg:sticky left-0 bottom-8 lg:top-24 w-full lg:w-96 h-fit px-12">
+      <div className="w-full lg:w-96 h-fit flex flex-col gap-8 justify-between items-center bg-white ring-1 ring-slate-200 rounded-xl shadow-xl px-8 py-4">
         <div className="w-full flex flex-col gap-2.5">
           <span className="tracking-tighter text-slate-800 font-semibold">
             Set your seat
@@ -33,6 +34,7 @@ const DetailCheckoutBox = ({ id, total }: { id: string; total: string }) => {
             Buy ticket
           </Button>
         </Link>
+      </div>
       </div>
     </>
   );

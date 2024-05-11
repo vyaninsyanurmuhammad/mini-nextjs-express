@@ -10,6 +10,7 @@ import {
 } from '@phosphor-icons/react/dist/ssr';
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -25,6 +26,7 @@ import { DiscountTransaction, DiscountType } from '@/models/discount-model';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { format } from 'date-fns';
 import { buyEventThunk, getDiscountsThunk } from '@/redux/features/app-thunk';
+import { redirect } from "next/navigation";
 
 const CheckoutOrderBox = ({
   id,
@@ -81,6 +83,9 @@ const CheckoutOrderBox = ({
         },
       }),
     );
+
+    redirect(`/`);
+
   };
 
   useEffect(() => {
@@ -94,8 +99,8 @@ const CheckoutOrderBox = ({
 
   return (
     <>
-      <div className="sticky top-24 w-fit h-fit flex flex-col gap-8 justify-between items-center">
-        <div className="w-[480px] h-fit flex flex-col gap-4 justify-between items-center bg-white ring-1 ring-slate-200 rounded-xl shadow-lg px-8 py-4">
+      <div className="lg:sticky lg:top-24 w-full lg:w-fit h-fit flex flex-col gap-8 justify-between items-center">
+        <div className="w-full lg:w-[480px] h-fit flex flex-col gap-4 justify-between items-center bg-white ring-1 ring-slate-200 rounded-xl shadow-lg px-8 py-4">
           <Button
             className={`w-full flex justify-start gap-2.5 rounded-full tracking-tight ring-[1px] ring-slate-300 ${
               isPointUsed
@@ -195,7 +200,7 @@ const CheckoutOrderBox = ({
             </DialogContent>
           </Dialog>
         </div>
-        <div className="w-[480px] h-fit flex flex-col gap-8 justify-between items-center bg-white ring-1 ring-slate-200 rounded-xl shadow-xl px-8 py-4">
+        <div className="w-full lg:w-[480px] h-fit flex flex-col gap-8 justify-between items-center bg-white ring-1 ring-slate-200 rounded-xl shadow-xl px-8 py-4">
           <div className="w-full flex flex-col gap-4">
             <span className="tracking-tighter text-slate-800 font-semibold">
               Shopping summary
@@ -275,13 +280,34 @@ const CheckoutOrderBox = ({
             </div>
           </div>
 
-          <Button
-            className="w-full flex gap-2.5 rounded-full tracking-tight bg-blue-crayola-900 hover:bg-blue-crayola-800"
-            onClick={onBuyOnClick}
-          >
-            <Ticket size={24} />
-            <span>Pay ticket</span>
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild disabled={selectedSeats.length === 0}>
+              <Button className="w-full flex gap-2.5 rounded-full tracking-tight bg-blue-crayola-900 hover:bg-blue-crayola-800">
+                <Ticket size={24} />
+                <span>Pay ticket</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently you buy this
+                  event.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2">
+                <DialogClose>
+                  <Button
+                    className="bg-white hover:bg-white/90 text-slate-800 w-full"
+                    variant={'outline'}
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button onClick={onBuyOnClick}>I'm Sure</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </>

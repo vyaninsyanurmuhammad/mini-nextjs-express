@@ -115,3 +115,50 @@ export const buyEventThunk = createAsyncThunk(
     }
   },
 );
+
+export const findEventThunk = createAsyncThunk(
+  'app/findEvent',
+  async ({
+    title,
+    eventLocation,
+    category,
+  }: {
+    title?: string;
+    eventLocation?: string[];
+    category?: string[];
+  }) => {
+    try {
+      const titleSearch = title ? `?title=${title}` : '';
+
+      const eventLocationSearch =
+        eventLocation && eventLocation.length > 0
+          ? `?${eventLocation
+              .map((data) => {
+                return `eventLocation=${data}`;
+              })
+              .join('&')}`
+          : '';
+
+      const categorySearch =
+        category && category.length > 0
+          ? `?${category
+              .map((data) => {
+                return `category=${data}`;
+              })
+              .join('&')}`
+          : '';
+
+      const res = await axios.get(
+        `http://localhost:8000/event-management/events/search${titleSearch}${categorySearch}${eventLocationSearch}`,
+      );
+
+      console.log(res.data);
+
+      const resData = res.data;
+
+      return resData.data;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);

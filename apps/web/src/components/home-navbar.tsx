@@ -11,7 +11,7 @@ import {
   UserPlus,
   Users,
 } from '@phosphor-icons/react/dist/ssr';
-import React, { useEffect } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { InputSearch } from './inputs/input-search';
 import {
   DropdownMenu,
@@ -61,17 +61,34 @@ import {
 } from '@/redux/features/auth-thunk';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { useRouter } from 'next/navigation';
-import { getPointThunk } from '@/redux/features/app-thunk';
-import { discountDismiss, pointDismiss } from '@/redux/features/app-slice';
+import { findEventThunk, getPointThunk } from '@/redux/features/app-thunk';
+import {
+  discountDismiss,
+  pointDismiss,
+  setSearchText,
+} from '@/redux/features/app-slice';
+import useDebounce from '@/lib/debounce';
 
 const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [isFocus, setIsFocus] = useState(false);
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.authReducer.user);
   const point = useAppSelector((state) => state.appReducer.point);
   const isUserExpired = useAppSelector(
     (state) => state.authReducer.isUserExpired,
   );
+  const searchText = useAppSelector((state) => state.appReducer.searchText);
+  const searchEvents = useAppSelector((state) => state.appReducer.searchEvents);
+
   const router = useRouter();
+
+  const debouncedSearch = useDebounce(searchText, 500);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    dispatch(setSearchText(e.target.value));
+  };
 
   useEffect(() => {
     dispatch(getIsTokenExpired());
@@ -81,7 +98,11 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
     } else {
       dispatch(getPointThunk());
     }
-  }, [user]);
+
+    if (debouncedSearch) {
+      dispatch(findEventThunk({ title: searchText }));
+    }
+  }, [user, debouncedSearch]);
 
   return (
     <>
@@ -98,12 +119,42 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
           </Link>
         </div>
         {isSearch && (
-          <div className="hidden lg:flex w-full">
+          <div className="hidden lg:flex w-full relative focus:bg-black focus-visible:bg-black">
             <InputSearch
-              className="rounded-full bg-slate-100 focus:!ring-slate-blue-800"
+              ref={inputRef}
+              className="rounded-full w-full bg-slate-100 focus:!ring-slate-blue-800"
               type="text"
               placeholder="Search your event here!"
+              defaultValue={searchText}
+              onChange={handleInputChange}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onKeyDownCapture={(e) => e.key === 'Enter' && router.push("/search")}
+
             />
+            {searchText && isFocus && (
+              <div className="absolute z-10 top-12 bg-white w-full rounded-md shadow-md border-[1px] p-2">
+                {searchEvents.map((data, index) => {
+                  return (
+                    <Link key={`${data.id}-${index}`} href={`/${data.id}`}>
+                      <Button className="w-full text-slate-800 bg-white hover:bg-slate-50/90 justify-between">
+                        <span>{data.title}</span>
+                        <span>
+                          {data.price === 0
+                            ? 'Free'
+                            : new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR',
+                              })
+                                .format(data.price)
+                                .toString()}
+                        </span>
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
         <div className="w-full flex justify-center lg:hidden">
@@ -114,13 +165,11 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
               </Button>
             </SheetTrigger>
             <SheetContent side={'top'}>
-              <SheetHeader>
-                <SheetTitle>Are you absolutely sure?</SheetTitle>
-                <SheetDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </SheetDescription>
-              </SheetHeader>
+              <InputSearch
+                className="rounded-full w-full bg-slate-100 focus:!ring-slate-blue-800"
+                type="text"
+                placeholder="Search your event here!"
+              />
             </SheetContent>
           </Sheet>
         </div>

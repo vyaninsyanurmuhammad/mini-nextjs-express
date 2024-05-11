@@ -24,7 +24,7 @@ const ActiveTicketDetail = ({ params }: { params: { id: string } }) => {
   return (
     <>
       <div className="p-12 w-full h-full flex flex-col items-center shrink-0">
-        <div className="w-[720px] h-fit flex flex-col gap-4 shrink-0">
+        <div className="w-full lg:w-[720px] h-fit flex flex-col gap-4 shrink-0">
           {event &&
             event.TicketTransaction.map((data, index) => (
               <TicketActiveDetailCard

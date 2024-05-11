@@ -9,7 +9,7 @@ const InputSearch = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
     return (
       <>
-        <div className="flex relative justify-start items-center">
+        <div className="flex w-full relative justify-start items-center">
           <Search className="absolute ml-2.5 h-5 w-5 text-slate-blue-800" />
           <input
             type={type}

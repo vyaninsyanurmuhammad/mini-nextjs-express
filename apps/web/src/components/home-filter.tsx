@@ -18,7 +18,7 @@ const HomeFilter = () => {
           <span className="text-slate-800 font-medium">Filter</span>
         </div>
         <div className="px-6 py-6 flex flex-col gap-8 bg-white rounded-b-xl">
-          <div className="flex flex-col gap-8">
+          {/* <div className="flex flex-col gap-8">
             <Slider
               defaultValue={[0, 10000]}
               max={10000}
@@ -29,7 +29,7 @@ const HomeFilter = () => {
               <HomeFilterInputPrice title="Minimum" value={rangePrice[0]}/>
               <HomeFilterInputPrice title="Maximum"  value={rangePrice[1]}/>
             </div>
-          </div>
+          </div> */}
 
           <HomeFilterMultiselect
             className="w-full"

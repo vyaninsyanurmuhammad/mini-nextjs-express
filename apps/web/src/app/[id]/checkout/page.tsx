@@ -8,6 +8,15 @@ import { getDetailEventThunk } from '@/redux/features/app-thunk';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { redirect, useParams, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { Ticket } from "@phosphor-icons/react/dist/ssr";
 
 const CheckOutPage = () => {
   const dispatch = useAppDispatch();
@@ -91,7 +100,7 @@ const CheckOutPage = () => {
 
   useEffect(() => {
     if (!user) {
-      redirect(`/${search.id}`);
+      redirect(`/auth/signin`);
     }
 
     dispatch(getDetailEventThunk(search.id));
@@ -108,11 +117,11 @@ const CheckOutPage = () => {
     <>
       <div className="flex flex-col bg-slate-50 h-screen w-screen overflow-hidden">
         <HomeNavbar />
-        <div className="h-[calc(100vh-73px)] w-screen relative flex flex-row gap-12 px-12 py-6">
+        <div className="h-[calc(100vh-73px)] w-screen relative flex flex-col lg:flex-row gap-12 px-12 py-6">
           <main className="h-full w-full flex flex-col gap-8 relative overflow-auto">
             <div className="flex flex-col gap-2.5">
               <h2 className="tracking-tighter text-xl font-semibold text-slate-800">
-                Select your seat {search.id}
+                Select your seat
               </h2>
             </div>
             <div className="h-full w-full flex flex-col gap-8 relative overflow-auto rounded-xl border-[1px] border-slate-200">
@@ -173,11 +182,21 @@ const CheckOutPage = () => {
             </div>
           </main>
           {event && (
-            <CheckoutOrderBox
-              id={event.id}
-              harga={event.price}
-              selectedSeats={sortSeats(selectedSeats)}
-            />
+            <Sheet>
+              <SheetTrigger disabled={sortSeats(selectedSeats).length === 0}>
+                <Button className="w-full flex gap-2.5 rounded-full tracking-tight bg-blue-crayola-900 hover:bg-blue-crayola-800">
+                  <Ticket size={24} />
+                  <span>Pay ticket</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side={"bottom"}>
+                <CheckoutOrderBox
+                  id={event.id}
+                  harga={event.price}
+                  selectedSeats={sortSeats(selectedSeats)}
+                />
+              </SheetContent>
+            </Sheet>
           )}
         </div>
       </div>

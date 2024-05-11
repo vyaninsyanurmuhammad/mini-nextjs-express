@@ -160,7 +160,7 @@ export default function Home() {
           </div>
           <div className="flex flex-col md:flex-row gap-8 px-12">
             <div className="rounded-xl h-64 w-full bg-slate-blue-800 p-12 flex flex-col gap-3 justify-end">
-              <h2 className="text-white text-4xl font-bold tracking-tighter">
+              <h2 className="text-white text-2xl lg:text-4xl font-bold tracking-tighter">
                 Get Special Discounts For You
               </h2>
               <Button className="tracking-tighter rounded-full w-fit">
@@ -168,7 +168,7 @@ export default function Home() {
               </Button>
             </div>
             <div className="rounded-xl h-64 w-full bg-blue-crayola-800 p-12 flex flex-col gap-3 justify-end">
-              <h2 className="text-white text-4xl font-bold tracking-tighter">
+              <h2 className="text-white text-2xl lg:text-4xl font-bold tracking-tighter">
                 Get More Points by Using Reveral Code
               </h2>
               <Button className="tracking-tighter rounded-full w-fit">

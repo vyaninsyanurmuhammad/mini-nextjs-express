@@ -521,7 +521,7 @@ const Store = () => {
                           <SheetFooter>
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button className="mb-12">Save changes</Button>
+                                <Button className="mb-12">Save</Button>
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
@@ -533,17 +533,17 @@ const Store = () => {
                                     permanently add event to server.
                                   </DialogDescription>
                                 </DialogHeader>
-                                <DialogFooter>
-                                  <DialogClose>
+                                <DialogFooter className="gap-2">
+                                  <DialogClose className="w-full">
                                     <Button
-                                      className="bg-white hover:bg-white/90 text-slate-800"
+                                      className="w-full bg-white hover:bg-white/90 text-slate-800"
                                       variant={'outline'}
                                     >
                                       Cancel
                                     </Button>
                                   </DialogClose>
-                                  <DialogClose>
-                                    <Button onClick={()=> formik.submitForm()}>I'm Sure</Button>
+                                  <DialogClose className="w-full">
+                                    <Button className="w-full" onClick={()=> formik.submitForm()}>I'm Sure</Button>
                                   </DialogClose>
                                 </DialogFooter>
                               </DialogContent>

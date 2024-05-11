@@ -750,6 +750,108 @@ const getTransactionDetail = async (req: Request, res: Response) => {
   }
 };
 
+const findEvents = async (req: Request, res: Response) => {
+  try {
+    const { title, eventLocation, category } = req.query;
+
+    const findLocationsPrisma = await prisma.event.findMany({
+      select: {
+        eventLocation: true,
+      },
+    });
+
+    const findCategoiresPrisma = await prisma.category.findMany({
+      select: {
+        title: true,
+      },
+    });
+
+    const eventLocationArr = findLocationsPrisma.map((data) => {
+      return data.eventLocation;
+    });
+
+    const eventCategoriesArr = findCategoiresPrisma.map((data) => {
+      return data.title;
+    });
+
+    const findEventsPrisma = await prisma.event.findMany({
+      where: {
+        title: {
+          search: title?.toString(),
+        },
+        eventAt: {
+          gt: new Date(),
+        },
+        eventLocation: {
+          in: [
+            ...(eventLocation
+              ? Array.isArray(eventLocation)
+                ? (eventLocation as string[])
+                : [eventLocation as string]
+              : eventLocationArr),
+          ],
+        },
+        EventCategory: {
+          every: {
+            Category: {
+              title: {
+                in: [
+                  ...(category
+                    ? Array.isArray(category)
+                      ? (category as string[])
+                      : [category as string]
+                    : eventCategoriesArr),
+                ],
+              },
+            },
+          },
+        },
+      },
+      include: {
+        EventCategory: {
+          include: {
+            Category: {
+              select: {
+                id: false,
+                title: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'get event transaction successfully',
+      eventLocation: [
+        ...(eventLocation
+          ? Array.isArray(eventLocation)
+            ? (eventLocation as string[])
+            : [eventLocation as string]
+          : []),
+      ],
+      category: [
+        ...(category
+          ? Array.isArray(category)
+            ? (category as string[])
+            : [category as string]
+          : eventCategoriesArr),
+      ],
+      data: findEventsPrisma,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+
 export default {
   addEvent,
   getStoreEventsActive,
@@ -763,4 +865,5 @@ export default {
   getTransactions,
   getTransactionDetail,
   getStoreEventsInactiveById,
+  findEvents,
 };

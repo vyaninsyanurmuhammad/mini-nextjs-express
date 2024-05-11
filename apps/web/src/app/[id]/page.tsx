@@ -56,7 +56,7 @@ const Detail = ({ params }: { params: { id: string } }) => {
         <HomeNavbar />
         {event && (
           <div className="h-fit w-full flex flex-row gap-12 px-12 py-6">
-            <main className="h-fit w-full flex flex-col gap-8">
+            <main className="h-fit w-full flex flex-col gap-8 pb-52 lg:pb-0">
               <div className="w-full flex flex-col gap-8">
                 <div className="h-96 w-full bg-slate-blue-800 rounded-xl overflow-hidden">
                   <Image

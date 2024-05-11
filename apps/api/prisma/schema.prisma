@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -136,6 +137,7 @@ model Event {
   EventTransaction EventTransaction[]
 
   @@map("events")
+  @@fulltext(title)
 }
 
 model Category {
