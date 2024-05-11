@@ -1,3 +1,5 @@
+'use client';
+
 import CardEvent from '@/components/card-event';
 import HomeFilter from '@/components/home-filter';
 import HomeNavbar from '@/components/home-navbar';
@@ -10,8 +12,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { useAppSelector, useAppDispatch } from '@/redux/hook';
+import { useEffect } from 'react';
 
 export default function Search() {
+  const searchText = useAppSelector((state) => state.appReducer.searchText);
+
+  const dispatch = useAppDispatch();
+
+  // useEffect(() => {
+  //   dispatch()
+  // }, []);
+
   return (
     <>
       <div className="flex flex-col bg-slate-50 h-screen w-screen overflow-x-hidden">
@@ -44,16 +56,16 @@ export default function Search() {
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  <PaginationPrevious href="?page=0" />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationLink href="#">1</PaginationLink>
+                  <PaginationLink href="?page=1">1</PaginationLink>
                 </PaginationItem>
                 <PaginationItem>
                   <PaginationEllipsis />
                 </PaginationItem>
                 <PaginationItem>
-                  <PaginationNext href="#" />
+                  <PaginationNext href="?page=1" />
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

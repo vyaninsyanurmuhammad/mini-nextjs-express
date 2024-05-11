@@ -7,6 +7,7 @@ const TicketTransactionCard = ({
   title,
   year,
   ticketId,
+  buyDate,
   date,
   time,
   seatCode,
@@ -21,6 +22,7 @@ const TicketTransactionCard = ({
   title: string;
   year: string;
   ticketId: string;
+  buyDate: string;
   date: string;
   time: string;
   seatCode: SeatPositionType[];
@@ -69,7 +71,13 @@ const TicketTransactionCard = ({
                 </p>
               </div>
               <div className="w-full h-fit grid grid-cols-5 gap-3 justify-start items-start bg-white rounded-lg">
-                <p className="text-slate-500 text-sm break-words">date</p>
+                <p className="text-slate-500 text-sm break-words">buy date</p>
+                <p className="col-span-4 text-slate-800 text-sm break-words font-semibold">
+                  {buyDate}
+                </p>
+              </div>
+              <div className="w-full h-fit grid grid-cols-5 gap-3 justify-start items-start bg-white rounded-lg">
+                <p className="text-slate-500 text-sm break-words">event date</p>
                 <p className="col-span-4 text-slate-800 text-sm break-words font-semibold">
                   {date}
                 </p>

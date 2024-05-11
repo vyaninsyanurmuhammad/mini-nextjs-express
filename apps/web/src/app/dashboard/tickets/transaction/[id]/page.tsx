@@ -51,6 +51,10 @@ const TransactionTicketDetail = ({ params }: { params: { id: string } }) => {
               title={event.Event.title}
               location={event.Event.eventLocation}
               time={new Date(event.Event.eventAt).toLocaleTimeString()}
+              buyDate={format(
+                new Date(event.createdAt),
+                'PPpp',
+              )}
               date={format(
                 new Date(event.Event.eventAt).toLocaleDateString(),
                 'PPP',

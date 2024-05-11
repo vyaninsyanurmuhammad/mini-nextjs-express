@@ -73,6 +73,10 @@ const Tickets = () => {
                 <TicketActiveCard
                   src={data.Event.eventImage}
                   title={data.Event.title}
+                  buyDate={format(
+                    new Date(data.createdAt),
+                    'PPpp',
+                  )}
                   location={data.Event.eventLocation}
                   time={new Date(data.Event.eventAt).toLocaleTimeString()}
                   date={format(

@@ -15,12 +15,14 @@ const TicketActiveCard = ({
   time,
   date,
   tickets,
+  buyDate,
 }: {
   src: string;
   title: string;
   location: string;
   time: string;
   date: string;
+  buyDate?: string;
   tickets?: number;
 }) => {
   return (
@@ -40,6 +42,14 @@ const TicketActiveCard = ({
             {title}
           </h2>
           <div className="flex flex-col gap-2.5">
+            {buyDate && (
+              <div className="w-full h-fit grid grid-cols-5 gap-3 justify-start items-start bg-white rounded-lg">
+                <p className="text-slate-500 text-sm break-words">buy date</p>
+                <p className="col-span-4 text-slate-800 text-sm break-words font-semibold">
+                  {buyDate}
+                </p>
+              </div>
+            )}
             <div className="w-full flex flex-wrap gap-4 gap-y-2">
               <div className="flex gap-1.5 items-center text-slate-500">
                 <MapPinLine size={20} />

@@ -543,7 +543,12 @@ const Store = () => {
                                     </Button>
                                   </DialogClose>
                                   <DialogClose className="w-full">
-                                    <Button className="w-full" onClick={()=> formik.submitForm()}>I'm Sure</Button>
+                                    <Button
+                                      className="w-full"
+                                      onClick={() => formik.submitForm()}
+                                    >
+                                      I'm Sure
+                                    </Button>
                                   </DialogClose>
                                 </DialogFooter>
                               </DialogContent>
@@ -612,9 +617,37 @@ const Store = () => {
             <>
               <div className="h-full w-fit flex flex-col items-center gap-2.5">
                 <span>You are not an organizer yet</span>
-                <Button onClick={() => dispatch(signUpOrganizerThunk())}>
-                  I wanna be an organizer
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button>I wanna be an organizer</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Are you absolutely sure?</DialogTitle>
+                      <DialogDescription>
+                        This action cannot be undone. This will permanently make you be organizer.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="gap-2">
+                      <DialogClose className="w-full">
+                        <Button
+                          className="w-full bg-white hover:bg-white/90 text-slate-800"
+                          variant={'outline'}
+                        >
+                          Cancel
+                        </Button>
+                      </DialogClose>
+                      <DialogClose className="w-full">
+                        <Button
+                          className="w-full"
+                          onClick={() => dispatch(signUpOrganizerThunk())}
+                        >
+                          I'm Sure
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </>
           ))}

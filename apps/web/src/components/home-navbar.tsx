@@ -114,7 +114,7 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
           >
             <Confetti weight="bold" size={32} />
             <span className="hidden lg:flex text-2xl font-extrabold tracking-tighter">
-              ShowTime! <span>{user ? user.role[0] : 'null'}</span>
+              ShowTime!
             </span>
           </Link>
         </div>
@@ -128,9 +128,14 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
               defaultValue={searchText}
               onChange={handleInputChange}
               onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onKeyDownCapture={(e) => e.key === 'Enter' && router.push("/search")}
-
+              onBlur={() =>
+                setTimeout(() => {
+                  setIsFocus(false);
+                }, 500)
+              }
+              onKeyDownCapture={(e) =>
+                e.key === 'Enter' && router.push('/search')
+              }
             />
             {searchText && isFocus && (
               <div className="absolute z-10 top-12 bg-white w-full rounded-md shadow-md border-[1px] p-2">
@@ -169,7 +174,41 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                 className="rounded-full w-full bg-slate-100 focus:!ring-slate-blue-800"
                 type="text"
                 placeholder="Search your event here!"
+                defaultValue={searchText}
+                onChange={handleInputChange}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() =>
+                  setTimeout(() => {
+                    setIsFocus(false);
+                  }, 500)
+                }
+                onKeyDownCapture={(e) =>
+                  e.key === 'Enter' && router.push('/search')
+                }
               />
+              {searchText && isFocus && (
+                <div className="absolute z-10 left-0 top-24 bg-white w-full rounded-md shadow-md border-[1px] p-2">
+                  {searchEvents.map((data, index) => {
+                    return (
+                      <Link key={`${data.id}-${index}`} href={`/${data.id}`}>
+                        <Button className="w-full text-slate-800 bg-white hover:bg-slate-50/90 justify-between">
+                          <span>{data.title}</span>
+                          <span>
+                            {data.price === 0
+                              ? 'Free'
+                              : new Intl.NumberFormat('id-ID', {
+                                  style: 'currency',
+                                  currency: 'IDR',
+                                })
+                                  .format(data.price)
+                                  .toString()}
+                          </span>
+                        </Button>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </SheetContent>
           </Sheet>
         </div>

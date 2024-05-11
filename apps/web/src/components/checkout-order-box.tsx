@@ -26,7 +26,7 @@ import { DiscountTransaction, DiscountType } from '@/models/discount-model';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { format } from 'date-fns';
 import { buyEventThunk, getDiscountsThunk } from '@/redux/features/app-thunk';
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from 'next/navigation';
 
 const CheckoutOrderBox = ({
   id,
@@ -37,6 +37,8 @@ const CheckoutOrderBox = ({
   harga: number;
   selectedSeats: SeatPositionType[];
 }) => {
+  const router = useRouter();
+
   const dispatch = useAppDispatch();
 
   const [isPointUsed, setIsPointUsed] = useState(false);
@@ -84,8 +86,7 @@ const CheckoutOrderBox = ({
       }),
     );
 
-    redirect(`/`);
-
+    router.push('/dashboard/tickets');
   };
 
   useEffect(() => {
@@ -107,7 +108,7 @@ const CheckoutOrderBox = ({
                 ? 'bg-slate-blue-800 hover:bg-slate-blue-800/90 text-white'
                 : 'text-slate-800 bg-white hover:bg-slate-50'
             }`}
-            disabled={points === 0}
+            disabled={points === 0 || harga === 0}
             onClick={onSetIsPointUsedClick}
           >
             <PiggyBank size={24} />
@@ -291,8 +292,8 @@ const CheckoutOrderBox = ({
               <DialogHeader>
                 <DialogTitle>Are you absolutely sure?</DialogTitle>
                 <DialogDescription>
-                  This action cannot be undone. This will permanently you buy this
-                  event.
+                  This action cannot be undone. This will permanently you buy
+                  this event.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter className="gap-2">

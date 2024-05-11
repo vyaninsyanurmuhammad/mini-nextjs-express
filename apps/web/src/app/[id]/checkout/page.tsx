@@ -16,7 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { Ticket } from "@phosphor-icons/react/dist/ssr";
+import { Ticket } from '@phosphor-icons/react/dist/ssr';
 
 const CheckOutPage = () => {
   const dispatch = useAppDispatch();
@@ -182,21 +182,30 @@ const CheckOutPage = () => {
             </div>
           </main>
           {event && (
-            <Sheet>
-              <SheetTrigger disabled={sortSeats(selectedSeats).length === 0}>
-                <Button className="w-full flex gap-2.5 rounded-full tracking-tight bg-blue-crayola-900 hover:bg-blue-crayola-800">
-                  <Ticket size={24} />
-                  <span>Pay ticket</span>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side={"bottom"}>
+            <>
+              <div className="hidden lg:block">
                 <CheckoutOrderBox
                   id={event.id}
                   harga={event.price}
                   selectedSeats={sortSeats(selectedSeats)}
                 />
-              </SheetContent>
-            </Sheet>
+              </div>
+              <Sheet>
+                <SheetTrigger className="block lg:hidden" disabled={sortSeats(selectedSeats).length === 0}>
+                  <Button className="w-full flex gap-2.5 rounded-full tracking-tight bg-blue-crayola-900 hover:bg-blue-crayola-800">
+                    <Ticket size={24} />
+                    <span>Pay ticket</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side={'bottom'}>
+                  <CheckoutOrderBox
+                    id={event.id}
+                    harga={event.price}
+                    selectedSeats={sortSeats(selectedSeats)}
+                  />
+                </SheetContent>
+              </Sheet>
+            </>
           )}
         </div>
       </div>

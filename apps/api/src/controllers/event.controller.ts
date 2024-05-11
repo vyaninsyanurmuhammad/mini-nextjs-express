@@ -685,6 +685,9 @@ const getTransactions = async (req: Request, res: Response) => {
       where: {
         buyerId: user.id,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
       include: {
         Event: true,
         TicketTransaction: true,
@@ -752,7 +755,7 @@ const getTransactionDetail = async (req: Request, res: Response) => {
 
 const findEvents = async (req: Request, res: Response) => {
   try {
-    const { title, eventLocation, category } = req.query;
+    const { title, eventLocation, category, page } = req.query;
 
     const findLocationsPrisma = await prisma.event.findMany({
       select: {
@@ -773,6 +776,43 @@ const findEvents = async (req: Request, res: Response) => {
     const eventCategoriesArr = findCategoiresPrisma.map((data) => {
       return data.title;
     });
+
+    // const findEventsForPagePrisma = await prisma.event.findMany({
+    //   where: {
+    //     title: {
+    //       search: title?.toString(),
+    //     },
+    //     eventAt: {
+    //       gt: new Date(),
+    //     },
+    //     eventLocation: {
+    //       in: [
+    //         ...(eventLocation
+    //           ? Array.isArray(eventLocation)
+    //             ? (eventLocation as string[])
+    //             : [eventLocation as string]
+    //           : eventLocationArr),
+    //       ],
+    //     },
+    //     EventCategory: {
+    //       every: {
+    //         Category: {
+    //           title: {
+    //             in: [
+    //               ...(category
+    //                 ? Array.isArray(category)
+    //                   ? (category as string[])
+    //                   : [category as string]
+    //                 : eventCategoriesArr),
+    //             ],
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
+
+    // const totalData = findEventsForPagePrisma.length
 
     const findEventsPrisma = await prisma.event.findMany({
       where: {
