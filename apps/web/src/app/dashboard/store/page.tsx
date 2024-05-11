@@ -48,6 +48,16 @@ import {
 } from '@/redux/features/mystore-thunk';
 import Image from 'next/image';
 import Link from 'next/link';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 const Store = () => {
   const user = useAppSelector((state) => state.authReducer.user);
@@ -60,6 +70,7 @@ const Store = () => {
 
   const [date, setDate] = useState<Date>();
   const [open, setOpen] = useState(false);
+  const [openSheet, setOpenSheet] = useState(false);
   const [file, setFile] = useState<any>([]);
 
   const listCategoryDummy = ['Sport', 'Concert', 'Art', 'Conference'];
@@ -103,7 +114,9 @@ const Store = () => {
       .required('Title is required')
       .min(6, 'Must be exactly 5 digits minimum')
       .max(500, 'Must be exactly 500 digits maximum'),
-    location: Yup.string().required('Location is required').max(191, 'Must be exactly 191 digits maximum'),
+    location: Yup.string()
+      .required('Location is required')
+      .max(191, 'Must be exactly 191 digits maximum'),
     date: Yup.date().required('Date is required'),
     time: Yup.string().required('Time is required'),
     price: Yup.number().required('Time is required, set 0 if free'),
@@ -153,6 +166,8 @@ const Store = () => {
           thumbnail: file,
         }),
       );
+
+      setOpenSheet(false);
     },
   });
 
@@ -189,7 +204,7 @@ const Store = () => {
                   value="account"
                 >
                   <div className="">
-                    <Sheet>
+                    <Sheet open={openSheet} onOpenChange={setOpenSheet}>
                       <SheetTrigger asChild>
                         <Button>Add Event</Button>
                       </SheetTrigger>
@@ -504,9 +519,35 @@ const Store = () => {
                             </div>
                           </div>
                           <SheetFooter>
-                            <Button type="submit" className="mb-12">
-                              Save changes
-                            </Button>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button className="mb-12">Save changes</Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>
+                                    Are you absolutely sure?
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently add event to server.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                  <DialogClose>
+                                    <Button
+                                      className="bg-white hover:bg-white/90 text-slate-800"
+                                      variant={'outline'}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </DialogClose>
+                                  <DialogClose>
+                                    <Button onClick={()=> formik.submitForm()}>I'm Sure</Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
                           </SheetFooter>
                         </form>
                       </SheetContent>
@@ -516,14 +557,17 @@ const Store = () => {
                     events.map((data, index) => (
                       <Link
                         key={`${data.id}-${index}`}
-                        href={`/dashboard/store/${data.id}`}
+                        href={`/dashboard/store/active/${data.id}`}
                       >
                         <TicketActiveCard
                           src={data.eventImage}
                           title={data.title}
                           location={data.eventLocation}
                           time={new Date(data.eventAt).toLocaleTimeString()}
-                          date={new Date(data.eventAt).toLocaleDateString()}
+                          date={format(
+                            new Date(data.eventAt).toLocaleDateString(),
+                            'PPP',
+                          )}
                         />
                       </Link>
                     ))
@@ -539,26 +583,28 @@ const Store = () => {
                 >
                   {inactiveEvents.length > 0 ? (
                     inactiveEvents.map((data, index) => (
-                      <TicketActiveCard
+                      <Link
                         key={`${data.id}-${index}`}
-                        src={data.eventImage}
-                        title={data.title}
-                        location={data.eventLocation}
-                        time={new Date(data.eventAt).toLocaleTimeString()}
-                        date={new Date(data.eventAt).toLocaleDateString()}
-                      />
+                        href={`/dashboard/store/inactive/${data.id}`}
+                      >
+                        <TicketActiveCard
+                          key={`${data.id}-${index}`}
+                          src={data.eventImage}
+                          title={data.title}
+                          location={data.eventLocation}
+                          time={new Date(data.eventAt).toLocaleTimeString()}
+                          date={format(
+                            new Date(data.eventAt).toLocaleDateString(),
+                            'PPP',
+                          )}
+                        />
+                      </Link>
                     ))
                   ) : (
                     <>
-                      <span>You don't have expired ticket</span>
+                      <span>You don't have inactive events</span>
                     </>
                   )}
-                  {/* <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard />
-                  <TicketActiveCard /> */}
                 </TabsContent>
               </Tabs>
             </>

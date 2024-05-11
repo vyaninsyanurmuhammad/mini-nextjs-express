@@ -14,16 +14,18 @@ const TicketActiveCard = ({
   location,
   time,
   date,
+  tickets,
 }: {
   src: string;
   title: string;
   location: string;
   time: string;
   date: string;
+  tickets?: number;
 }) => {
   return (
     <>
-      <div className="h-fit relative flex flex-col sm:flex-row gap-4 rounded-xl bg-white p-2 shadow-xl">
+      <div className="h-fit relative flex flex-col sm:flex-row gap-4 rounded-xl bg-white p-2 lg:pr-8 shadow-xl">
         <div className="h-48 w-full sm:w-80 sm:shrink-0 rounded-lg bg-slate-blue-800 overflow-hidden">
           <Image
             className="object-cover w-full h-full !relative"
@@ -52,12 +54,14 @@ const TicketActiveCard = ({
                 <span className="text-sm">{date}</span>
               </div>
             </div>
-            <div className="flex flex-wrap gap-4 gap-y-2">
-              <div className="flex gap-1.5 items-center text-slate-500">
-                <Ticket size={20} />
-                <span className="text-sm">3 tickets</span>
+            {tickets && (
+              <div className="flex flex-wrap gap-4 gap-y-2">
+                <div className="flex gap-1.5 items-center text-slate-500">
+                  <Ticket size={20} />
+                  <span className="text-sm">{tickets} tickets</span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -132,3 +132,29 @@ export const getEventActiveDetailThunk = createAsyncThunk(
     }
   },
 );
+
+export const getEventInactiveDetailThunk = createAsyncThunk(
+  'mystore/getEventInactiveDetail',
+  async (id: string) => {
+    try {
+      const token = await getToken();
+
+      const res = await axios.get(
+        `http://localhost:8000/event-management/store/events/inactive/${id}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const resData: FetchEventDetail = res.data;
+
+      console.log(resData);
+
+      return resData.data;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);

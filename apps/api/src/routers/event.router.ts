@@ -13,6 +13,26 @@ eventRouter.post(
   eventController.buyEvent,
 );
 eventRouter.get(
+  '/tickets/active',
+  jwtGuard.jwtVerifyToken,
+  eventController.getTransactionActive,
+);
+eventRouter.get(
+  '/tickets/active/:id',
+  jwtGuard.jwtVerifyToken,
+  eventController.getTransactionActiveDetail,
+);
+eventRouter.get(
+  '/tickets/transaction',
+  jwtGuard.jwtVerifyToken,
+  eventController.getTransactions,
+);
+eventRouter.get(
+  '/tickets/transaction/:id',
+  jwtGuard.jwtVerifyToken,
+  eventController.getTransactionDetail,
+);
+eventRouter.get(
   '/store/events/active',
   jwtGuard.jwtVerifyToken,
   eventController.getStoreEventsActive,
@@ -27,6 +47,11 @@ eventRouter.get(
   jwtGuard.jwtVerifyToken,
   eventController.getStoreEventsInactive,
 );
+eventRouter.get(
+  '/store/events/inactive/:id',
+  jwtGuard.jwtVerifyToken,
+  eventController.getStoreEventsInactiveById,
+);
 eventRouter.post(
   '/store/event',
   jwtGuard.jwtVerifyToken,
@@ -34,6 +59,5 @@ eventRouter.post(
   jwtGuard.jwtVerifyToken,
   eventController.addEvent,
 );
-
 
 export default eventRouter;

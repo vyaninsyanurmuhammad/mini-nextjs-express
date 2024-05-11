@@ -80,7 +80,7 @@ const Detail = ({ params }: { params: { id: string } }) => {
                     <h2 className="text-2xl font-bold tracking-tighter text-slate-800/50">
                       {event.price === 0
                         ? 'Free'
-                        : new Intl.NumberFormat('en-IN', {
+                        : new Intl.NumberFormat('id-ID', {
                             style: 'currency',
                             currency: 'IDR',
                           })

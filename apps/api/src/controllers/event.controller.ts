@@ -183,7 +183,7 @@ const getStoreEventsActive = async (req: Request, res: Response) => {
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'add event successfully',
+      message: 'get active events successfully',
       data: getEventByOwnerIdPrisma,
     });
   } catch (error) {
@@ -227,7 +227,7 @@ const getStoreEventsInactive = async (req: Request, res: Response) => {
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'add event successfully',
+      message: 'get inactive events successfully',
       data: getEventByOwnerIdPrisma,
     });
   } catch (error) {
@@ -278,7 +278,57 @@ const getStoreEventsActiveById = async (req: Request, res: Response) => {
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'add event successfully',
+      message: 'add active event by id successfully',
+      data: getEventByOwnerIdPrisma,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+const getStoreEventsInactiveById = async (req: Request, res: Response) => {
+  try {
+    const { user } = req.body;
+    const { id } = req.params;
+
+    const getEventByOwnerIdPrisma = await prisma.event.findUnique({
+      where: {
+        id,
+        ownerId: user.id,
+        eventAt: {
+          not: { gt: new Date() },
+        },
+      },
+      include: {
+        EventCategory: {
+          include: {
+            Category: {
+              select: {
+                id: false,
+                title: true,
+              },
+            },
+          },
+        },
+        EventRating: true,
+        SeatEvent: true,
+        EventTransaction: {
+          include: {
+            TicketTransaction: true,
+          },
+        },
+      },
+    });
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'add active event by id successfully',
       data: getEventByOwnerIdPrisma,
     });
   } catch (error) {
@@ -295,6 +345,11 @@ const getStoreEventsActiveById = async (req: Request, res: Response) => {
 const getEvents = async (req: Request, res: Response) => {
   try {
     const getEventsPrisma = await prisma.event.findMany({
+      where: {
+        eventAt: {
+          gt: new Date(),
+        },
+      },
       orderBy: {
         eventAt: 'asc',
       },
@@ -315,7 +370,7 @@ const getEvents = async (req: Request, res: Response) => {
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'add event successfully',
+      message: 'get events successfully',
       data: getEventsPrisma,
     });
   } catch (error) {
@@ -369,7 +424,7 @@ const getEventbyId = async (req: Request, res: Response) => {
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'add event successfully',
+      message: 'get event by id successfully',
       data: getEventsPrisma,
     });
   } catch (error) {
@@ -523,10 +578,166 @@ const buyEvent = async (req: Request, res: Response) => {
     return res.status(201).send({
       status: 201,
       success: true,
-      message: 'add event successfully',
+      message: 'add event transaction successfully',
       data: {
         ...getEvents,
       },
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+
+const getTransactionActive = async (req: Request, res: Response) => {
+  try {
+    const { user } = req.body;
+
+    const getTransactionActivePrisma = await prisma.eventTransaction.findMany({
+      where: {
+        buyerId: user.id,
+        Event: {
+          eventAt: {
+            gt: new Date(),
+          },
+        },
+      },
+      include: {
+        Event: true,
+        TicketTransaction: true,
+      },
+    });
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'get event transaction active successfully',
+      data: getTransactionActivePrisma,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+
+const getTransactionActiveDetail = async (req: Request, res: Response) => {
+  try {
+    const { user } = req.body;
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(202).send({
+        status: 202,
+        success: false,
+        message: 'input invalid',
+      });
+    }
+    const getTransactionActivePrisma = await prisma.eventTransaction.findUnique(
+      {
+        where: {
+          id,
+          buyerId: user.id,
+          Event: {
+            eventAt: {
+              gt: new Date(),
+            },
+          },
+        },
+        include: {
+          Event: true,
+          TicketTransaction: true,
+        },
+      },
+    );
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'get event transaction active successfully',
+      data: getTransactionActivePrisma,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+
+const getTransactions = async (req: Request, res: Response) => {
+  try {
+    const { user } = req.body;
+
+    const getTransactionActivePrisma = await prisma.eventTransaction.findMany({
+      where: {
+        buyerId: user.id,
+      },
+      include: {
+        Event: true,
+        TicketTransaction: true,
+      },
+    });
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'get event transaction active successfully',
+      data: getTransactionActivePrisma,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+
+const getTransactionDetail = async (req: Request, res: Response) => {
+  try {
+    const { user } = req.body;
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(202).send({
+        status: 202,
+        success: false,
+        message: 'input invalid',
+      });
+    }
+    const getTransactionActivePrisma = await prisma.eventTransaction.findUnique(
+      {
+        where: {
+          id,
+          buyerId: user.id,
+        },
+        include: {
+          Event: true,
+          TicketTransaction: true,
+        },
+      },
+    );
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'get event transaction successfully',
+      data: getTransactionActivePrisma,
     });
   } catch (error) {
     console.log(error);
@@ -547,4 +758,9 @@ export default {
   getEvents,
   getEventbyId,
   buyEvent,
+  getTransactionActive,
+  getTransactionActiveDetail,
+  getTransactions,
+  getTransactionDetail,
+  getStoreEventsInactiveById,
 };

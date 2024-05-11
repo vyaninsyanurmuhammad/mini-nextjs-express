@@ -107,7 +107,7 @@ export type TicketTransaction = {
   id: string;
   eventTransactionId: string;
   seatNumberX: number;
-  seatNumberY: number;
+  seatNumberY: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -170,4 +170,51 @@ export type BuyEvent = {
   pointsReduce: number;
   discountReduce?: string;
   seats: SeatPositionType[];
+};
+
+export type FetchEventTransactions = {
+  status: number;
+  success: boolean;
+  message: string;
+  data: EventTransactionTicket[];
+};
+
+export type FetchEventTransactionDetail = {
+  status: number;
+  success: boolean;
+  message: string;
+  data: EventTransactionTicket;
+};
+
+export type getTransactionActiveDetail = {
+  status: number;
+  success: boolean;
+  message: string;
+  data: EventTransactionTicket;
+};
+
+export type EventTransactionTicket = {
+  id: string;
+  buyerId: string;
+  pointsReduce: number;
+  discountReduce: number;
+  total: number;
+  createdAt: Date;
+  updatedAt: Date;
+  eventId: string;
+  Event: Event;
+  TicketTransaction: TicketTransaction[];
+};
+
+export type Event = {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  eventLocation: string;
+  eventAt: Date;
+  eventImage: string;
+  ownerId: string;
+  createdAt: Date;
+  updatedAt: Date;
 };

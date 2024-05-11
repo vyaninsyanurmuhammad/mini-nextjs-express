@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './features/auth-slice';
 import appReducer from './features/app-slice';
 import mystoreReducer from './features/mystore-slice';
+import myticketReducer from './features/myticket-slice';
 
 export const store = configureStore({
   reducer: {
     authReducer,
     appReducer,
     mystoreReducer,
+    myticketReducer,
   },
 });
 

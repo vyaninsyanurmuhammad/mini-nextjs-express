@@ -3,7 +3,7 @@
 import DetailCheckoutBox from '@/components/detail-checkout-box';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getEventActiveDetailThunk } from '@/redux/features/mystore-thunk';
+import { getEventActiveDetailThunk, getEventInactiveDetailThunk } from '@/redux/features/mystore-thunk';
 import { useAppSelector, useAppDispatch } from '@/redux/hook';
 import {
   MapPinLine,
@@ -43,7 +43,7 @@ const DetailProductStore = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
-    dispatch(getEventActiveDetailThunk(id));
+    dispatch(getEventInactiveDetailThunk(id));
   }, []);
 
   return (
@@ -70,9 +70,9 @@ const DetailProductStore = ({ params }: { params: { id: string } }) => {
                   </div>
                 ) : (
                   <div className="w-full flex flex-col gap-4">
-                    <div className="w-fit h-fit bg-blue-crayola-900 rounded-full px-4 py-1 flex justify-center items-center">
+                    <div className="w-fit h-fit bg-red-900 rounded-full px-4 py-1 flex justify-center items-center">
                       <span className="text-white text-sm font-semibold tracking-tighter">
-                        upcoming
+                        inactive
                       </span>
                     </div>
                     <h1 className="text-4xl font-bold tracking-tighter text-slate-800">

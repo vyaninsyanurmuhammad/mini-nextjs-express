@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { FetchPoint } from '@/models/point-model';
 import { getDiscountsThunk, getPointThunk } from './app-thunk';
 import { FetchDiscount } from '@/models/discount-model';
-import { addEventThunk, getEventActiveDetailThunk, getEventsActiveThunk, getEventsInactiveThunk } from './mystore-thunk';
+import { addEventThunk, getEventActiveDetailThunk, getEventInactiveDetailThunk, getEventsActiveThunk, getEventsInactiveThunk } from './mystore-thunk';
 import { Data as DataEvent, DataEventDetail } from '@/models/event-model';
 
 type InitialState = {
@@ -66,6 +66,17 @@ const mystoreSlice = createSlice({
       state.isFetchEventLoading = false;
     });
     builder.addCase(getEventActiveDetailThunk.rejected, (state) => {
+      state.isFetchEventLoading = false;
+    });
+
+    builder.addCase(getEventInactiveDetailThunk.pending, (state) => {
+      state.isFetchEventLoading = true;
+    });
+    builder.addCase(getEventInactiveDetailThunk.fulfilled, (state, action) => {
+      if (action.payload) state.event = action.payload;
+      state.isFetchEventLoading = false;
+    });
+    builder.addCase(getEventInactiveDetailThunk.rejected, (state) => {
       state.isFetchEventLoading = false;
     });
   },

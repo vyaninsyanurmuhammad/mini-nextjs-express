@@ -13,8 +13,9 @@ import {
 } from '@/components/ui/carousel';
 import { getLatestEventsThunk } from '@/redux/features/app-thunk';
 import { useAppSelector, useAppDispatch } from '@/redux/hook';
-import { format } from "date-fns";
+import { format } from 'date-fns';
 import Autoplay from 'embla-carousel-autoplay';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
@@ -45,17 +46,46 @@ export default function Home() {
               <CarouselContent className="m-0">
                 <CarouselItem className="pl-0">
                   <div className="h-96 w-full bg-slate-blue-800 text-5xl text-white flex justify-center items-center ">
-                    1
+                    <Image
+                      src={'/_198d4dc8-f357-4309-891f-2ff172fe01e9.jpeg'}
+                      className="h-full w-full object-cover !relative"
+                      fill
+                      sizes="100%"
+                      alt="1"
+                    />
                   </div>
                 </CarouselItem>
                 <CarouselItem className="pl-0">
                   <div className="h-96 w-full bg-slate-blue-700 text-5xl text-white flex justify-center items-center ">
-                    2
+                  <Image
+                      src={'/_c95899db-a3b0-4a60-adf6-f3919e0aaa29.jpeg'}
+                      className="h-full w-full object-cover !relative"
+                      fill
+                      sizes="100%"
+                      alt="2"
+                    />
                   </div>
                 </CarouselItem>
                 <CarouselItem className="pl-0">
                   <div className="h-96 w-full bg-slate-blue-600 text-5xl text-white flex justify-center items-center ">
-                    3
+                  <Image
+                      src={'/_e428a5e8-6584-4b04-bae0-1fe1c8656fc4.jpeg'}
+                      className="h-full w-full object-cover !relative"
+                      fill
+                      sizes="100%"
+                      alt="3"
+                    />
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="pl-0">
+                  <div className="h-96 w-full bg-slate-blue-600 text-5xl text-white flex justify-center items-center ">
+                  <Image
+                      src={'/_7dfc835a-a22f-431a-b377-cde91a754e2c.jpeg'}
+                      className="h-full w-full object-cover !relative"
+                      fill
+                      sizes="100%"
+                      alt="4"
+                    />
                   </div>
                 </CarouselItem>
               </CarouselContent>
@@ -85,11 +115,11 @@ export default function Home() {
                   {event.map((data, index) => (
                     <CarouselItem
                       key={`${data.id}-${index}`}
-                      className="basis-full md:basis-1/3 xl:basis-1/5"
+                      className="basis-full md:basis-1/3 xl:basis-1/5 py-2"
                     >
-                      <Link href={`/${data.id}`}>
+                      <Link className="h-auto" href={`/${data.id}`}>
                         <CardEvent
-                          className="shadow-sm ring-1 ring-slate-200 my-1"
+                          className="shadow-sm ring-1 ring-slate-200"
                           src={data.eventImage}
                           title={data.title}
                           location={data.eventLocation}
@@ -101,7 +131,7 @@ export default function Home() {
                           price={
                             data.price === 0
                               ? 'Free'
-                              : new Intl.NumberFormat('en-IN', {
+                              : new Intl.NumberFormat('id-ID', {
                                   style: 'currency',
                                   currency: 'IDR',
                                 })

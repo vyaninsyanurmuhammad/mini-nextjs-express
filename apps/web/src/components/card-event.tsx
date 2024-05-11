@@ -28,7 +28,7 @@ const CardEvent = ({
   return (
     <>
       <div
-        className={`w-full h-fit bg-white rounded-xl shadow-xl overflow-hidden ${className}`}
+        className={`w-full h-full bg-white rounded-xl shadow-xl overflow-hidden ${className}`}
       >
         <div className="h-48 w-full bg-slate-blue-800 p-4 flex justify-end relative">
           <div className="w-fit h-fit bg-blue-crayola-900 rounded-full px-4 py-1 flex justify-center items-center z-10">
