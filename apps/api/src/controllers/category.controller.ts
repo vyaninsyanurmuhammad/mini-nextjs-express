@@ -3,13 +3,19 @@ import { Request, Response } from 'express';
 
 const getCategories = async (req: Request, res: Response) => {
   try {
-    const getCategoryPrisma = await prisma.category.findMany();
+    const getCategoryPrisma = await prisma.category.findMany({
+      select: {
+        title: true,
+      },
+    });
 
     return res.status(201).send({
       status: 201,
       success: true,
       message: 'get all category successfully',
-      data: getCategoryPrisma,
+      data: getCategoryPrisma.map((data) => {
+        return data.title;
+      }),
     });
   } catch (error) {
     console.log(error);

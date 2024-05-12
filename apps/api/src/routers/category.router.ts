@@ -3,7 +3,7 @@ import { Router } from 'express';
 
 const categoryRouter = Router();
 
-categoryRouter.get('/roles', categoryController.getCategories);
-categoryRouter.post('/role', categoryController.addCategory);
+categoryRouter.get('/categories', categoryController.getCategories);
+categoryRouter.post('/category', categoryController.addCategory);
 
 export default categoryRouter;

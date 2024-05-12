@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { cn } from '@/lib/utils';
@@ -33,11 +33,9 @@ const HomeFilterMultiselect = ({
   list: string[];
   title: string;
 }) => {
-  const [listCategory, setListCategory] = useState(
-    list.map((data) => {
-      return { text: data, state: false };
-    }),
-  );
+  const [listCategory, setListCategory] = useState<
+    { text: string; state: boolean }[]
+  >([]);
 
   const selectedListCategory = [
     ...listCategory
@@ -46,6 +44,16 @@ const HomeFilterMultiselect = ({
   ];
 
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!listCategory) {
+      setListCategory(
+        list.map((data) => {
+          return { text: data, state: false };
+        }),
+      );
+    }
+  }, [listCategory]);
 
   return (
     <>

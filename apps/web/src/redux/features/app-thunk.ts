@@ -6,6 +6,7 @@ import { FetchDiscount } from '@/models/discount-model';
 import {
   BuyEvent,
   EventForm,
+  FetchEventLocations,
   FetchEventsHome,
   FetchEventsHomeDetail,
 } from '@/models/event-model';
@@ -128,33 +129,61 @@ export const findEventThunk = createAsyncThunk(
     category?: string[];
   }) => {
     try {
-      const titleSearch = title ? `?title=${title}` : '';
+      const titleSearch = title ? `title=${title}` : '';
 
       const eventLocationSearch =
         eventLocation && eventLocation.length > 0
-          ? `?${eventLocation
+          ? `${eventLocation
               .map((data) => {
                 return `eventLocation=${data}`;
               })
               .join('&')}`
-          : '';
+          : undefined;
 
       const categorySearch =
         category && category.length > 0
-          ? `?${category
+          ? `${category
               .map((data) => {
                 return `category=${data}`;
               })
               .join('&')}`
-          : '';
+          : undefined;
+
+      const listReq = [titleSearch, eventLocationSearch, categorySearch];
 
       const res = await axios.get(
-        `http://localhost:8000/event-management/events/search${titleSearch}${categorySearch}${eventLocationSearch}`,
+        `http://localhost:8000/event-management/events/search?${listReq
+          .filter((data) => data !== undefined)
+          .join('&')}`,
       );
 
+      console.log(
+        `http://localhost:8000/event-management/events/search?${listReq
+        .filter((data) => data !== undefined)
+        .join('&')}`,
+      );
       console.log(res.data);
 
       const resData = res.data;
+
+      return resData.data;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);
+
+export const getEventLocationsThunk = createAsyncThunk(
+  'app/getEventLocations',
+  async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/event-management/events/locations`,
+      );
+
+      const resData: FetchEventLocations = res.data;
+
+      console.log(res.data);
 
       return resData.data;
     } catch (error) {

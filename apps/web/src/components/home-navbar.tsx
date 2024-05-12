@@ -99,9 +99,10 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
       dispatch(getPointThunk());
     }
 
-    if (debouncedSearch) {
-      dispatch(findEventThunk({ title: searchText }));
-    }
+    console.log('debounce:', debouncedSearch);
+    // if (debouncedSearch) {
+    dispatch(findEventThunk({ title: searchText }));
+    // }
   }, [user, debouncedSearch]);
 
   return (
@@ -182,9 +183,16 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                     setIsFocus(false);
                   }, 500)
                 }
-                onKeyDownCapture={(e) =>
-                  e.key === 'Enter' && router.push('/search')
-                }
+                onKeyDownCapture={(e) => {
+                  if (e.key === 'Enter') {
+                    dispatch(
+                      findEventThunk({
+                        title: searchText,
+                      }),
+                    );
+                    router.push('/search');
+                  }
+                }}
               />
               {searchText && isFocus && (
                 <div className="absolute z-10 left-0 top-24 bg-white w-full rounded-md shadow-md border-[1px] p-2">

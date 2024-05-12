@@ -892,6 +892,32 @@ const findEvents = async (req: Request, res: Response) => {
   }
 };
 
+const getLocations = async (req: Request, res: Response) => {
+  try {
+    const getCategoryPrisma = await prisma.event.findMany({
+      select: {
+        eventLocation: true,
+      },
+      distinct: ['eventLocation'],
+    });
+
+    return res.status(201).send({
+      status: 201,
+      success: true,
+      message: 'get all locations successfully',
+      data: getCategoryPrisma.map((data) => data.eventLocation),
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).send({
+      status: 500,
+      message: 'server error',
+      error: (error as Error).message,
+    });
+  }
+};
+
 export default {
   addEvent,
   getStoreEventsActive,
@@ -906,4 +932,5 @@ export default {
   getTransactionDetail,
   getStoreEventsInactiveById,
   findEvents,
+  getLocations,
 };

@@ -4,6 +4,7 @@ import {
   findEventThunk,
   getDetailEventThunk,
   getDiscountsThunk,
+  getEventLocationsThunk,
   getLatestEventsThunk,
   getPointThunk,
 } from './app-thunk';
@@ -22,6 +23,7 @@ type InitialState = {
   unavailableSeat: SeatPositionType[];
   searchText: string;
   searchEvents: DataEventHome[];
+  eventLocations: string[]
 };
 
 const initialState: InitialState = {
@@ -35,6 +37,7 @@ const initialState: InitialState = {
   unavailableSeat: [],
   searchText: '',
   searchEvents: [],
+  eventLocations: []
 };
 
 const appSlice = createSlice({
@@ -115,6 +118,17 @@ const appSlice = createSlice({
       state.getEventsLoading = false;
     });
     builder.addCase(findEventThunk.rejected, (state, action) => {
+      state.getEventsLoading = false;
+    });
+
+    builder.addCase(getEventLocationsThunk.pending, (state, action) => {
+      state.getEventsLoading = true;
+    });
+    builder.addCase(getEventLocationsThunk.fulfilled, (state, action) => {
+      if (action.payload) state.eventLocations = [...action.payload];
+      state.getEventsLoading = false;
+    });
+    builder.addCase(getEventLocationsThunk.rejected, (state, action) => {
       state.getEventsLoading = false;
     });
   },

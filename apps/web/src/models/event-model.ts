@@ -186,6 +186,13 @@ export type FetchEventTransactionDetail = {
   data: EventTransactionTicket;
 };
 
+export type FetchEventLocations = {
+  status: number;
+  success: boolean;
+  message: string;
+  data: string[];
+};
+
 export type getTransactionActiveDetail = {
   status: number;
   success: boolean;

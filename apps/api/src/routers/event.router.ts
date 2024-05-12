@@ -5,6 +5,7 @@ import { Router } from 'express';
 
 const eventRouter = Router();
 
+eventRouter.get('/events/locations', eventController.getLocations);
 eventRouter.get('/events/search', eventController.findEvents);
 eventRouter.get('/events', eventController.getEvents);
 eventRouter.get('/event/:id', eventController.getEventbyId);
