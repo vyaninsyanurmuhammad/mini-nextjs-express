@@ -2,7 +2,13 @@ import { createSlice } from '@reduxjs/toolkit';
 import { FetchPoint } from '@/models/point-model';
 import { getDiscountsThunk, getPointThunk } from './app-thunk';
 import { FetchDiscount } from '@/models/discount-model';
-import { addEventThunk, getEventActiveDetailThunk, getEventInactiveDetailThunk, getEventsActiveThunk, getEventsInactiveThunk } from './mystore-thunk';
+import {
+  addEventThunk,
+  getEventActiveDetailThunk,
+  getEventInactiveDetailThunk,
+  getEventsActiveThunk,
+  getEventsInactiveThunk,
+} from './mystore-thunk';
 import { Data as DataEvent, DataEventDetail } from '@/models/event-model';
 
 type InitialState = {
@@ -27,7 +33,7 @@ const mystoreSlice = createSlice({
       state.isFetchEventLoading = true;
     });
     builder.addCase(addEventThunk.fulfilled, (state, action) => {
-      if (action.payload) state.events = [...state.events, action.payload];
+      if (action.payload) state.events = [action.payload, ...state.events];
       state.isFetchEventLoading = false;
     });
     builder.addCase(addEventThunk.rejected, (state) => {
@@ -45,7 +51,6 @@ const mystoreSlice = createSlice({
       state.isFetchEventLoading = false;
     });
 
-
     builder.addCase(getEventsInactiveThunk.pending, (state) => {
       state.isFetchEventLoading = true;
     });
@@ -56,7 +61,6 @@ const mystoreSlice = createSlice({
     builder.addCase(getEventsInactiveThunk.rejected, (state) => {
       state.isFetchEventLoading = false;
     });
-
 
     builder.addCase(getEventActiveDetailThunk.pending, (state) => {
       state.isFetchEventLoading = true;

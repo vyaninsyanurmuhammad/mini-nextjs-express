@@ -16,7 +16,7 @@ const Discount = () => {
   return (
     <>
       <div className="w-full h-full flex flex-col items-center pt-12">
-        <div className="w-[720px] h-full flex flex-col items-center">
+        <div className="w-full lg:w-[720px] h-full flex flex-col items-center px-12 lg:px-0">
           {discount ? (
             discount.data.discountTransaction.length > 0 ? (
               discount.data.discountTransaction.map((data, index) => (
@@ -27,7 +27,7 @@ const Discount = () => {
                   <div className="absolute bg-slate-800/80 h-full w-full flex justify-center items-center text-white font-bold text-4xl">
                    <span className="-rotate-12">USED</span> 
                   </div>
-                  <div className="w-full flex flex-row gap-4 bg-slate-blue-800 px-12 py-12">
+                  <div className="w-full flex flex-col md:flex-row gap-4 items-center bg-slate-blue-800 px-12 py-12">
                     <div className="w-full flex flex-col gap-2">
                       <span className="text-4xl/none font-bold tracking-tighter text-white line-clamp-1">
                         {data.CouponDiscount.title}

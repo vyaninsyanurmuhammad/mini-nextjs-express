@@ -129,7 +129,7 @@ export const findEventThunk = createAsyncThunk(
     category?: string[];
   }) => {
     try {
-      const titleSearch = title ? `title=${title}` : '';
+      const titleSearch = title ? `title=${title.split(' ').join('+')}` : '';
 
       const eventLocationSearch =
         eventLocation && eventLocation.length > 0
@@ -159,8 +159,8 @@ export const findEventThunk = createAsyncThunk(
 
       console.log(
         `http://localhost:8000/event-management/events/search?${listReq
-        .filter((data) => data !== undefined)
-        .join('&')}`,
+          .filter((data) => data !== undefined)
+          .join('&')}`,
       );
       console.log(res.data);
 

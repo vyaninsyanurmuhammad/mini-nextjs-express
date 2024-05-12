@@ -520,7 +520,7 @@ const Store = () => {
                           </div>
                           <SheetFooter>
                             <Dialog>
-                              <DialogTrigger asChild>
+                              <DialogTrigger asChild disabled={!formik.isValid}>
                                 <Button className="mb-12">Save</Button>
                               </DialogTrigger>
                               <DialogContent>
@@ -625,7 +625,8 @@ const Store = () => {
                     <DialogHeader>
                       <DialogTitle>Are you absolutely sure?</DialogTitle>
                       <DialogDescription>
-                        This action cannot be undone. This will permanently make you be organizer.
+                        This action cannot be undone. This will permanently make
+                        you be organizer.
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="gap-2">

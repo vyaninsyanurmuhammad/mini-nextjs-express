@@ -291,6 +291,7 @@ const getStoreEventsActiveById = async (req: Request, res: Response) => {
     });
   }
 };
+
 const getStoreEventsInactiveById = async (req: Request, res: Response) => {
   try {
     const { user } = req.body;
@@ -777,6 +778,8 @@ const findEvents = async (req: Request, res: Response) => {
       return data.title;
     });
 
+    const findTitle = title ? title.toString().split('+').join(' ') : undefined;
+
     // const findEventsForPagePrisma = await prisma.event.findMany({
     //   where: {
     //     title: {
@@ -817,7 +820,7 @@ const findEvents = async (req: Request, res: Response) => {
     const findEventsPrisma = await prisma.event.findMany({
       where: {
         title: {
-          search: title?.toString(),
+          search: findTitle,
         },
         eventAt: {
           gt: new Date(),
@@ -865,20 +868,21 @@ const findEvents = async (req: Request, res: Response) => {
       status: 201,
       success: true,
       message: 'get event transaction successfully',
-      eventLocation: [
-        ...(eventLocation
-          ? Array.isArray(eventLocation)
-            ? (eventLocation as string[])
-            : [eventLocation as string]
-          : []),
-      ],
-      category: [
-        ...(category
-          ? Array.isArray(category)
-            ? (category as string[])
-            : [category as string]
-          : eventCategoriesArr),
-      ],
+      // eventLocation: [
+      //   ...(eventLocation
+      //     ? Array.isArray(eventLocation)
+      //       ? (eventLocation as string[])
+      //       : [eventLocation as string]
+      //     : []),
+      // ],
+      // category: [
+      //   ...(category
+      //     ? Array.isArray(category)
+      //       ? (category as string[])
+      //       : [category as string]
+      //     : eventCategoriesArr),
+      // ],
+      findTitle,
       data: findEventsPrisma,
     });
   } catch (error) {
