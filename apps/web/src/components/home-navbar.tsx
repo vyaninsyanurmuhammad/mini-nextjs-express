@@ -61,7 +61,11 @@ import {
 } from '@/redux/features/auth-thunk';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { useRouter } from 'next/navigation';
-import { findEventThunk, getPointThunk } from '@/redux/features/app-thunk';
+import {
+  findEventThunk,
+  findEventThunkDetail,
+  getPointThunk,
+} from '@/redux/features/app-thunk';
 import {
   discountDismiss,
   pointDismiss,
@@ -134,18 +138,28 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                   setIsFocus(false);
                 }, 500)
               }
-              onKeyDownCapture={(e) =>
-                e.key === 'Enter' && router.push('/search')
-              }
+              onKeyDownCapture={(e) => {
+                if (e.key === 'Enter') {
+                  dispatch(
+                    findEventThunkDetail({
+                      title: searchText,
+                      page: 1,
+                    }),
+                  );
+                  router.push('/search');
+                }
+              }}
             />
             {searchText && isFocus && (
               <div className="absolute z-10 top-12 bg-white w-full rounded-md shadow-md border-[1px] p-2">
                 {searchEvents.map((data, index) => {
                   return (
                     <Link key={`${data.id}-${index}`} href={`/${data.id}`}>
-                      <Button className="w-full text-slate-800 bg-white hover:bg-slate-50/90 justify-between">
-                        <span>{data.title}</span>
-                        <span>
+                      <Button className="w-full text-slate-800 bg-white hover:bg-slate-50/90 justify-between gap-2">
+                        <span className="w-full overflow-hidden truncate text-start">
+                          {data.title}
+                        </span>
+                        <span className="w-fit shrink-0">
                           {data.price === 0
                             ? 'Free'
                             : new Intl.NumberFormat('id-ID', {
@@ -185,9 +199,11 @@ const HomeNavbar = ({ isSearch = true }: { isSearch?: boolean }) => {
                 }
                 onKeyDownCapture={(e) => {
                   if (e.key === 'Enter') {
+                    console.log('------enter');
                     dispatch(
-                      findEventThunk({
+                      findEventThunkDetail({
                         title: searchText,
+                        page: 1,
                       }),
                     );
                     router.push('/search');

@@ -15,6 +15,7 @@ import pointRouter from './routers/point.router';
 import discountRouter from './routers/discount.router';
 import eventRouter from './routers/event.router';
 import * as path from 'path';
+import reveralRouter from './routers/reveral.router';
 
 function configureApp(): Express {
   const app = express();
@@ -52,6 +53,7 @@ function setRoutes(app: Express): void {
   app.use('/discount-management/', discountRouter);
   app.use('/event-management/', eventRouter);
   app.use('/auth-management/', authRouter);
+  app.use('/reveral-management/', reveralRouter);
 
   app.use(express.static(path.join(__dirname, '../public')));
 }

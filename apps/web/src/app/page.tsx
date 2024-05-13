@@ -11,6 +11,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { Skeleton } from '@/components/ui/skeleton';
 import { getLatestEventsThunk } from '@/redux/features/app-thunk';
 import { useAppSelector, useAppDispatch } from '@/redux/hook';
 import { format } from 'date-fns';
@@ -21,6 +22,7 @@ import { useEffect } from 'react';
 
 export default function Home() {
   const event = useAppSelector((state) => state.appReducer.events);
+  const loading = useAppSelector((state) => state.appReducer.getEventsLoading);
 
   const dispatch = useAppDispatch();
 
@@ -57,7 +59,7 @@ export default function Home() {
                 </CarouselItem>
                 <CarouselItem className="pl-0">
                   <div className="h-96 w-full bg-slate-blue-700 text-5xl text-white flex justify-center items-center ">
-                  <Image
+                    <Image
                       src={'/_c95899db-a3b0-4a60-adf6-f3919e0aaa29.jpeg'}
                       className="h-full w-full object-cover !relative"
                       fill
@@ -68,7 +70,7 @@ export default function Home() {
                 </CarouselItem>
                 <CarouselItem className="pl-0">
                   <div className="h-96 w-full bg-slate-blue-600 text-5xl text-white flex justify-center items-center ">
-                  <Image
+                    <Image
                       src={'/_e428a5e8-6584-4b04-bae0-1fe1c8656fc4.jpeg'}
                       className="h-full w-full object-cover !relative"
                       fill
@@ -79,7 +81,7 @@ export default function Home() {
                 </CarouselItem>
                 <CarouselItem className="pl-0">
                   <div className="h-96 w-full bg-slate-blue-600 text-5xl text-white flex justify-center items-center ">
-                  <Image
+                    <Image
                       src={'/_7dfc835a-a22f-431a-b377-cde91a754e2c.jpeg'}
                       className="h-full w-full object-cover !relative"
                       fill

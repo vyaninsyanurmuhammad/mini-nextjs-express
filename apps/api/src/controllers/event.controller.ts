@@ -208,6 +208,9 @@ const getStoreEventsInactive = async (req: Request, res: Response) => {
           not: { gt: new Date() },
         },
       },
+      orderBy: {
+        eventAt: 'desc',
+      },
       include: {
         EventCategory: {
           include: {
@@ -475,6 +478,8 @@ const buyEvent = async (req: Request, res: Response) => {
       eventId: string;
     };
 
+    let actualPointsReduced = 0;
+
     if (pointsReduce) {
       const getPoints = await prisma.pointsWallet.findUnique({
         where: {
@@ -488,7 +493,7 @@ const buyEvent = async (req: Request, res: Response) => {
       if (getPoints) {
         let remainingPayment = total;
 
-        getPoints.pointsTransactions.forEach(async (transaction) => {
+        for (const transaction of getPoints.pointsTransactions) {
           if (remainingPayment > 0) {
             const pointsToDeduct = Math.min(
               transaction.points,
@@ -505,8 +510,11 @@ const buyEvent = async (req: Request, res: Response) => {
             });
 
             remainingPayment -= pointsToDeduct;
+            actualPointsReduced += pointsToDeduct;
+          } else {
+            break;
           }
-        });
+        }
       }
     }
 
@@ -538,7 +546,7 @@ const buyEvent = async (req: Request, res: Response) => {
       addEventTransaction = await prisma.eventTransaction.create({
         data: {
           total,
-          pointsReduce,
+          pointsReduce: actualPointsReduced,
           discountReduce: 0,
           buyerId: user.id,
           eventId: id,
@@ -606,6 +614,11 @@ const getTransactionActive = async (req: Request, res: Response) => {
           eventAt: {
             gt: new Date(),
           },
+        },
+      },
+      orderBy: {
+        Event: {
+          eventAt: 'asc',
         },
       },
       include: {
@@ -780,44 +793,57 @@ const findEvents = async (req: Request, res: Response) => {
 
     const findTitle = title ? title.toString().split('+').join(' ') : undefined;
 
-    // const findEventsForPagePrisma = await prisma.event.findMany({
-    //   where: {
-    //     title: {
-    //       search: title?.toString(),
-    //     },
-    //     eventAt: {
-    //       gt: new Date(),
-    //     },
-    //     eventLocation: {
-    //       in: [
-    //         ...(eventLocation
-    //           ? Array.isArray(eventLocation)
-    //             ? (eventLocation as string[])
-    //             : [eventLocation as string]
-    //           : eventLocationArr),
-    //       ],
-    //     },
-    //     EventCategory: {
-    //       every: {
-    //         Category: {
-    //           title: {
-    //             in: [
-    //               ...(category
-    //                 ? Array.isArray(category)
-    //                   ? (category as string[])
-    //                   : [category as string]
-    //                 : eventCategoriesArr),
-    //             ],
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
+    const findEventsForPagePrisma = await prisma.event.findMany({
+      where: {
+        title: {
+          search: title?.toString(),
+        },
+        eventAt: {
+          gt: new Date(),
+        },
+        eventLocation: {
+          in: [
+            ...(eventLocation
+              ? Array.isArray(eventLocation)
+                ? (eventLocation as string[])
+                : [eventLocation as string]
+              : eventLocationArr),
+          ],
+        },
+        EventCategory: {
+          every: {
+            Category: {
+              title: {
+                in: [
+                  ...(category
+                    ? Array.isArray(category)
+                      ? (category as string[])
+                      : [category as string]
+                    : eventCategoriesArr),
+                ],
+              },
+            },
+          },
+        },
+      },
+    });
 
-    // const totalData = findEventsForPagePrisma.length
+    const totalData = findEventsForPagePrisma.length;
+    let perPage = undefined;
+    let offset = undefined;
+    let totalPages = 1;
+
+    if (page) {
+      perPage = 8;
+
+      totalPages = Math.ceil(totalData / perPage);
+
+      offset = (Number(page) - 1) * perPage;
+    }
 
     const findEventsPrisma = await prisma.event.findMany({
+      take: perPage,
+      skip: offset,
       where: {
         title: {
           search: findTitle,
@@ -868,21 +894,9 @@ const findEvents = async (req: Request, res: Response) => {
       status: 201,
       success: true,
       message: 'get event transaction successfully',
-      // eventLocation: [
-      //   ...(eventLocation
-      //     ? Array.isArray(eventLocation)
-      //       ? (eventLocation as string[])
-      //       : [eventLocation as string]
-      //     : []),
-      // ],
-      // category: [
-      //   ...(category
-      //     ? Array.isArray(category)
-      //       ? (category as string[])
-      //       : [category as string]
-      //     : eventCategoriesArr),
-      // ],
-      findTitle,
+      count: findEventsPrisma.length,
+      currentPage: Number(page),
+      maxPage: totalPages,
       data: findEventsPrisma,
     });
   } catch (error) {

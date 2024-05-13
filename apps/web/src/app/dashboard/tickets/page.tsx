@@ -17,9 +17,13 @@ import {
 } from '@/redux/features/myticket-thunk';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { LoaderCircle } from 'lucide-react';
 
 const Tickets = () => {
   const events = useAppSelector((state) => state.myticketReducer.events);
+  const isLoading = useAppSelector(
+    (state) => state.myticketReducer.isFetchEventLoading,
+  );
   const eventTransactions = useAppSelector(
     (state) => state.myticketReducer.eventsTransaction,
   );
@@ -45,48 +49,57 @@ const Tickets = () => {
           </TabsList>
           <Separator orientation="horizontal" />
           <TabsContent className="pt-6 gap-4 flex flex-col" value="account">
-            {events.map((data, index) => (
-              <Link
-                key={`${data.id}-${index}`}
-                href={`/dashboard/tickets/active/${data.id}`}
-              >
-                <TicketActiveCard
-                  src={data.Event.eventImage}
-                  title={data.Event.title}
-                  location={data.Event.eventLocation}
-                  time={new Date(data.Event.eventAt).toLocaleTimeString()}
-                  date={format(
-                    new Date(data.Event.eventAt).toLocaleDateString(),
-                    'PPP',
-                  )}
-                  tickets={data.TicketTransaction.length}
-                />
-              </Link>
-            ))}
+            {isLoading ? (
+              <div className="h-full w-full flex justify-center items-center">
+                <LoaderCircle className="text-slate-blue-800 animate-spin" />
+              </div>
+            ) : events.length > 0 ? (
+              events.map((data, index) => (
+                <Link
+                  key={`${data.id}-${index}`}
+                  href={`/dashboard/tickets/active/${data.id}`}
+                >
+                  <TicketActiveCard
+                    src={data.Event.eventImage}
+                    title={data.Event.title}
+                    location={data.Event.eventLocation}
+                    time={new Date(data.Event.eventAt).toLocaleTimeString()}
+                    date={format(
+                      new Date(data.Event.eventAt).toLocaleDateString(),
+                      'PPP',
+                    )}
+                    tickets={data.TicketTransaction.length}
+                  />
+                </Link>
+              ))
+            ) : (
+              <span>You don't have up comming events</span>
+            )}
           </TabsContent>
           <TabsContent value="password" className="pt-6 gap-4 flex flex-col">
-            {eventTransactions.map((data, index) => (
-              <Link
-                key={`${data.id}-${index}`}
-                href={`/dashboard/tickets/transaction/${data.id}`}
-              >
-                <TicketActiveCard
-                  src={data.Event.eventImage}
-                  title={data.Event.title}
-                  buyDate={format(
-                    new Date(data.createdAt),
-                    'PPpp',
-                  )}
-                  location={data.Event.eventLocation}
-                  time={new Date(data.Event.eventAt).toLocaleTimeString()}
-                  date={format(
-                    new Date(data.Event.eventAt).toLocaleDateString(),
-                    'PPP',
-                  )}
-                  tickets={data.TicketTransaction.length}
-                />
-              </Link>
-            ))}
+            {eventTransactions.length > 0 ? (
+              eventTransactions.map((data, index) => (
+                <Link
+                  key={`${data.id}-${index}`}
+                  href={`/dashboard/tickets/transaction/${data.id}`}
+                >
+                  <TicketActiveCard
+                    src={data.Event.eventImage}
+                    title={data.Event.title}
+                    buyDate={format(new Date(data.createdAt), 'PPpp')}
+                    location={data.Event.eventLocation}
+                    time={new Date(data.Event.eventAt).toLocaleTimeString()}
+                    date={format(
+                      new Date(data.Event.eventAt).toLocaleDateString(),
+                      'PPP',
+                    )}
+                    tickets={data.TicketTransaction.length}
+                  />
+                </Link>
+              ))
+            ) : (
+              <span>You don't have any events transaction</span>
+            )}
           </TabsContent>
         </Tabs>
       </div>

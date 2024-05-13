@@ -9,7 +9,9 @@ import {
   FetchEventLocations,
   FetchEventsHome,
   FetchEventsHomeDetail,
+  FetchSearch,
 } from '@/models/event-model';
+import { FetchReveral } from "@/models/reveral-model";
 
 export const getPointThunk = createAsyncThunk('app/getPoint', async () => {
   try {
@@ -48,6 +50,8 @@ export const getDiscountsThunk = createAsyncThunk(
       );
 
       const resData: FetchDiscount = res.data;
+
+      console.log(res.data);
 
       return resData;
     } catch (error) {
@@ -117,6 +121,32 @@ export const buyEventThunk = createAsyncThunk(
   },
 );
 
+export const getReveralThunk = createAsyncThunk(
+  'app/getReveral',
+  async () => {
+    try {
+      const token = await getToken();
+
+      const res = await axios.get(
+        `http://localhost:8000/reveral-management/reveral`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log(res.data);
+
+      const resData: FetchReveral = res.data;
+
+      return resData.data;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);
+
 export const findEventThunk = createAsyncThunk(
   'app/findEvent',
   async ({
@@ -164,9 +194,75 @@ export const findEventThunk = createAsyncThunk(
       );
       console.log(res.data);
 
-      const resData = res.data;
+      const resData: FetchSearch = res.data;
 
       return resData.data;
+    } catch (error) {
+      return undefined;
+    }
+  },
+);
+
+export const findEventThunkDetail = createAsyncThunk(
+  'app/findEventDetail',
+  async ({
+    title,
+    eventLocation,
+    category,
+    page,
+  }: {
+    title?: string;
+    eventLocation?: string[];
+    category?: string[];
+    page?: number;
+  }) => {
+    try {
+      const titleSearch = title
+        ? `title=${title.split(' ').join('+')}`
+        : undefined;
+      const pageSearch = page ? `page=${page}` : undefined;
+
+      const eventLocationSearch =
+        eventLocation && eventLocation.length > 0
+          ? `${eventLocation
+              .map((data) => {
+                return `eventLocation=${data}`;
+              })
+              .join('&')}`
+          : undefined;
+
+      const categorySearch =
+        category && category.length > 0
+          ? `${category
+              .map((data) => {
+                return `category=${data}`;
+              })
+              .join('&')}`
+          : undefined;
+
+      const listReq = [
+        pageSearch,
+        titleSearch,
+        eventLocationSearch,
+        categorySearch,
+      ];
+
+      const res = await axios.get(
+        `http://localhost:8000/event-management/events/search?${listReq
+          .filter((data) => data !== undefined)
+          .join('&')}`,
+      );
+
+      console.log(
+        `http://localhost:8000/event-management/events/search?${listReq
+          .filter((data) => data !== undefined)
+          .join('&')}`,
+      );
+      console.log(res.data);
+
+      const resData: FetchSearch = res.data;
+
+      return resData;
     } catch (error) {
       return undefined;
     }

@@ -29,7 +29,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Check, ChevronsUpDown } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  Check,
+  ChevronsUpDown,
+  LoaderCircle,
+} from 'lucide-react';
 import LocalTooltips from '@/components/local-tooltips';
 import {
   Command,
@@ -62,6 +67,9 @@ import {
 const Store = () => {
   const user = useAppSelector((state) => state.authReducer.user);
   const events = useAppSelector((state) => state.mystoreReducer.events);
+  const isLoading = useAppSelector(
+    (state) => state.mystoreReducer.isFetchEventLoading,
+  );
   const inactiveEvents = useAppSelector(
     (state) => state.mystoreReducer.inactiveEvents,
   );
@@ -186,7 +194,12 @@ const Store = () => {
   return (
     <>
       <div className="w-full h-full flex justify-center p-12">
-        {user &&
+        {isLoading ? (
+          <div className="h-full w-full flex justify-center items-center">
+            <LoaderCircle className="text-slate-blue-800 animate-spin" />
+          </div>
+        ) : (
+          user &&
           (user.role.includes(2) ? (
             <>
               <Tabs defaultValue="account" className="w-full lg:w-[720px]">
@@ -651,7 +664,8 @@ const Store = () => {
                 </Dialog>
               </div>
             </>
-          ))}
+          ))
+        )}
       </div>
     </>
   );

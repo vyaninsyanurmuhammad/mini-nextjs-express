@@ -2,15 +2,22 @@ import { createSlice } from '@reduxjs/toolkit';
 import { FetchPoint } from '@/models/point-model';
 import {
   findEventThunk,
+  findEventThunkDetail,
   getDetailEventThunk,
   getDiscountsThunk,
   getEventLocationsThunk,
   getLatestEventsThunk,
   getPointThunk,
+  getReveralThunk,
 } from './app-thunk';
 import { FetchDiscount } from '@/models/discount-model';
-import { DataEventHome, DataEventHomeDetail } from '@/models/event-model';
+import {
+  DataEventHome,
+  DataEventHomeDetail,
+  FetchSearch,
+} from '@/models/event-model';
 import { SeatPositionType } from '@/models/seat-position-model';
+import { DataReferal } from '@/models/reveral-model';
 
 type InitialState = {
   point?: FetchPoint;
@@ -23,7 +30,10 @@ type InitialState = {
   unavailableSeat: SeatPositionType[];
   searchText: string;
   searchEvents: DataEventHome[];
-  eventLocations: string[]
+  searchEventsDetail?: FetchSearch;
+  eventLocations: string[];
+  reveral?: DataReferal;
+  isReveralLoading: boolean;
 };
 
 const initialState: InitialState = {
@@ -37,7 +47,10 @@ const initialState: InitialState = {
   unavailableSeat: [],
   searchText: '',
   searchEvents: [],
-  eventLocations: []
+  eventLocations: [],
+  searchEventsDetail: undefined,
+  reveral: undefined,
+  isReveralLoading: false,
 };
 
 const appSlice = createSlice({
@@ -121,6 +134,17 @@ const appSlice = createSlice({
       state.getEventsLoading = false;
     });
 
+    builder.addCase(findEventThunkDetail.pending, (state, action) => {
+      state.getEventsLoading = true;
+    });
+    builder.addCase(findEventThunkDetail.fulfilled, (state, action) => {
+      if (action.payload) state.searchEventsDetail = action.payload;
+      state.getEventsLoading = false;
+    });
+    builder.addCase(findEventThunkDetail.rejected, (state, action) => {
+      state.getEventsLoading = false;
+    });
+
     builder.addCase(getEventLocationsThunk.pending, (state, action) => {
       state.getEventsLoading = true;
     });
@@ -130,6 +154,17 @@ const appSlice = createSlice({
     });
     builder.addCase(getEventLocationsThunk.rejected, (state, action) => {
       state.getEventsLoading = false;
+    });
+
+    builder.addCase(getReveralThunk.pending, (state, action) => {
+      state.isReveralLoading = true;
+    });
+    builder.addCase(getReveralThunk.fulfilled, (state, action) => {
+      if (action.payload) state.reveral = action.payload;
+      state.isReveralLoading = false;
+    });
+    builder.addCase(getReveralThunk.rejected, (state, action) => {
+      state.isReveralLoading = false;
     });
   },
 });

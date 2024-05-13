@@ -179,6 +179,16 @@ export type FetchEventTransactions = {
   data: EventTransactionTicket[];
 };
 
+export type FetchSearch = {
+  status:      number;
+  success:     boolean;
+  message:     string;
+  count:       number;
+  currentPage: number;
+  maxPage:     number;
+  data:        DataEventHome[];
+}
+
 export type FetchEventTransactionDetail = {
   status: number;
   success: boolean;

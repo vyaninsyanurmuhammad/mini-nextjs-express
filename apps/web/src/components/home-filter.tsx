@@ -7,6 +7,7 @@ import HomeFilterInputPrice from './home-filter-input-price';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import {
   findEventThunk,
+  findEventThunkDetail,
   getEventLocationsThunk,
 } from '@/redux/features/app-thunk';
 import { cn } from '@/lib/utils';
@@ -73,7 +74,7 @@ const HomeFilter = () => {
 
   const onFilterHandle = () => {
     dispatch(
-      findEventThunk({
+      findEventThunkDetail({
         title: searchText,
         category: listCategory
           .filter((data) => data.state === true)
@@ -81,6 +82,8 @@ const HomeFilter = () => {
         eventLocation: listLocation
           .filter((data) => data.state === true)
           .map((data) => data.text),
+          page: 1,
+
       }),
     );
   };
@@ -131,7 +134,7 @@ const HomeFilter = () => {
             title="Category"
           />
           {eventLocations.join(', ')} */}
-          {searchText}
+          {/* {searchText} */}
           <div className={`flex flex-col gap-2 w-full`}>
             <Label htmlFor="category">Category</Label>
             <Popover open={openCategory} onOpenChange={setOpenCategory}>

@@ -1,5 +1,6 @@
 'use client';
 
+import { getReveralThunk } from '@/redux/features/app-thunk';
 import { getSessionThunk } from '@/redux/features/auth-thunk';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import React, { useEffect } from 'react';
@@ -8,11 +9,14 @@ const Profile = () => {
   const dispatch = useAppDispatch();
 
   const user = useAppSelector((state) => state.authReducer.user);
+  const reveral = useAppSelector((state) => state.appReducer.reveral);
 
   useEffect(() => {
     if (!user) {
       dispatch(getSessionThunk());
     }
+
+    dispatch(getReveralThunk());
   }, [user]);
 
   return (
@@ -44,6 +48,8 @@ const Profile = () => {
                 ))}
               </div>
             )}
+
+            {reveral && <div>my reveral: <span className="font-semibold">{reveral.code}</span> </div>}
           </div>
         </div>
       </div>

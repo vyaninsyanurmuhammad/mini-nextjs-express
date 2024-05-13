@@ -157,45 +157,51 @@ const CheckoutOrderBox = ({
                   <h3 className="tracking-tighter font-semibold text-slate-800">
                     Your discount vouchers
                   </h3>
-                  {discounts.map((discount, index) => (
-                    <Button
-                      key={`${discount.id}-${index}`}
-                      disabled={discount.isUsed}
-                      className={`w-full h-fit rounded-lg p-4 flex flex-col items-start gap-2.5 ring-[1px] ring-slate-200 ${
-                        isDiscount?.id === discount.id
-                          ? 'bg-blue-crayola-900 hover:bg-blue-crayola-800'
-                          : 'bg-white hover:bg-slate-100'
-                      }`}
-                      onClick={() => onSetIsDiscountClick(discount)}
-                    >
-                      <div className="flex flex-col items-start gap-1">
+                  {discounts.length > 0 ? (
+                    discounts.map((discount, index) => (
+                      <Button
+                        key={`${discount.id}-${index}`}
+                        disabled={discount.isUsed}
+                        className={`w-full h-fit rounded-lg p-4 flex flex-col items-start gap-2.5 ring-[1px] ring-slate-200 ${
+                          isDiscount?.id === discount.id
+                            ? 'bg-blue-crayola-900 hover:bg-blue-crayola-800'
+                            : 'bg-white hover:bg-slate-100'
+                        }`}
+                        onClick={() => onSetIsDiscountClick(discount)}
+                      >
+                        <div className="flex flex-col items-start gap-1">
+                          <p
+                            className={`tracking-tight font-semibold text-lg ${
+                              isDiscount?.id === discount.id
+                                ? 'text-white'
+                                : 'text-slate-800'
+                            }`}
+                          >
+                            {discount.CouponDiscount.title}&nbsp;
+                            {discount.CouponDiscount.total}%
+                          </p>
+                        </div>
+
                         <p
-                          className={`tracking-tight font-semibold text-lg ${
+                          className={`tracking-tighter font-light text-sm ${
                             isDiscount?.id === discount.id
                               ? 'text-white'
                               : 'text-slate-800'
                           }`}
                         >
-                          {discount.CouponDiscount.title}&nbsp;
-                          {discount.CouponDiscount.total}%
+                          expired at&nbsp;{' '}
+                          {format(
+                            new Date(discount.expiredAt).toLocaleDateString(),
+                            'PPP',
+                          )}
                         </p>
-                      </div>
-
-                      <p
-                        className={`tracking-tighter font-light text-sm ${
-                          isDiscount?.id === discount.id
-                            ? 'text-white'
-                            : 'text-slate-800'
-                        }`}
-                      >
-                        expired at&nbsp;{' '}
-                        {format(
-                          new Date(discount.expiredAt).toLocaleDateString(),
-                          'PPP',
-                        )}
-                      </p>
-                    </Button>
-                  ))}
+                      </Button>
+                    ))
+                  ) : (
+                    <div className="h-full w-full flex justify-center items-center">
+                      <span>discounts not found</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </DialogContent>
@@ -236,7 +242,7 @@ const CheckoutOrderBox = ({
                 <p className="w-full flex justify-between tracking-tight text-slate-800 text-sm font-semibold">
                   Total price :&nbsp;
                   <span className="font-semibold text-sm">
-                    {(selectedSeats.length * harga).toLocaleString('id-ID', {
+                    Rp.{(selectedSeats.length * harga).toLocaleString('id-ID', {
                       currency: 'IDR',
                     })}
                   </span>
