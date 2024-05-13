@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
+import { cn } from '@/lib/utils';
+import ReduxProvider from '@/redux/provider';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,11 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Header />
-        {children}
-        <Footer />
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          'min-h-screen overflow-hidden bg-background font-sans antialiased',
+          inter.variable,
+        )}
+      >
+        <ReduxProvider>{children}</ReduxProvider>
       </body>
     </html>
   );

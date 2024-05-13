@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -11,17 +12,20 @@ datasource db {
 }
 
 model User {
-  id               String           @id @default(uuid())
-  name             String
-  email            String
-  password         String
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-  userRoles        UserRole[]
-  reveral          Reveral?
-  PointsWallet     PointsWallet?
-  coupontDiscounts CouponDiscount[]
-  DiscountsWallet  DiscountsWallet?
+  id                     String                   @id @default(uuid())
+  name                   String
+  email                  String                   @unique
+  password               String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  userRoles              UserRole[]
+  reveral                Reveral?
+  PointsWallet           PointsWallet?
+  coupontDiscounts       CouponDiscount[]
+  DiscountsWallet        DiscountsWallet?
+  Event                  Event[]
+  EventRatingTransaction EventRatingTransaction[]
+  EventTransaction       EventTransaction[]
 
   @@map("users")
 }
@@ -82,7 +86,7 @@ model PointsTransaction {
 model CouponDiscount {
   id                  String                @id @default(uuid())
   title               String
-  total               String
+  total               Int
   User                User                  @relation(fields: [userId], references: [id])
   userId              String
   discountTransaction DiscountTransaction[]
@@ -113,4 +117,105 @@ model DiscountTransaction {
   updatedAt         DateTime        @updatedAt
 
   @@map("discountTransactions")
+}
+
+model Event {
+  id               String             @id @default(uuid())
+  title            String
+  description      String             @db.VarChar(500)
+  price            Float
+  eventLocation    String
+  eventAt          DateTime
+  eventImage       String
+  User             User               @relation(fields: [ownerId], references: [id])
+  ownerId          String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  EventCategory    EventCategory[]
+  SeatEvent        SeatEvent?
+  EventRating      EventRating?
+  EventTransaction EventTransaction[]
+
+  @@map("events")
+  @@fulltext(title)
+}
+
+model Category {
+  id            Int             @id @default(autoincrement())
+  title         String
+  EventCategory EventCategory[]
+
+  @@map("categories")
+}
+
+model EventCategory {
+  id         Int      @id @default(autoincrement())
+  Event      Event    @relation(fields: [eventId], references: [id])
+  eventId    String
+  Category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  @@map("eventCategories")
+}
+
+model SeatEvent {
+  id         String   @id @default(uuid())
+  Event      Event    @relation(fields: [eventId], references: [id])
+  eventId    String   @unique
+  dimensionX Int
+  dimensionY Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("seatEvents")
+}
+
+model EventRating {
+  id                     String                   @id @default(uuid())
+  Event                  Event                    @relation(fields: [eventId], references: [id])
+  eventId                String                   @unique
+  EventRatingTransaction EventRatingTransaction[]
+
+  @@map("eventRatings")
+}
+
+model EventRatingTransaction {
+  id               String      @id @default(uuid())
+  user             User        @relation(fields: [userId], references: [id])
+  userId           String
+  EventRating      EventRating @relation(fields: [eventRatingId], references: [id])
+  eventRatingId    String
+  qualityEventRate Int
+  experienceRate   Int
+  suggestions      String
+
+  @@map("eventRatingTransactions")
+}
+
+model EventTransaction {
+  id                String              @id @default(uuid())
+  User              User                @relation(fields: [buyerId], references: [id])
+  buyerId           String
+  pointsReduce      Float
+  discountReduce    Float
+  total             Float
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  TicketTransaction TicketTransaction[]
+  Event             Event               @relation(fields: [eventId], references: [id])
+  eventId           String
+
+  @@map("eventTransactions")
+}
+
+model TicketTransaction {
+  id                 String           @id @default(uuid())
+  EventTransaction   EventTransaction @relation(fields: [eventTransactionId], references: [id])
+  eventTransactionId String
+  seatNumberX        Int
+  seatNumberY        String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@map("TicketTransactions")
 }
